@@ -1,0 +1,511 @@
+[settings]
+keywords = "agentic|vibe.?cod|ai.?cod|coding.?agent|claude.?code|cursor.?ai|copilot|llm.?tool|ai.?engineer|context.?engineer|mcp|harness|code.?gen|ai.?pair|prompt.?engineer|llm.?agent|rag|fine.?tun|tool.?use|function.?call|agentic.?ide|windsurf|swe.?bench|swe.?agent|code.?review|cline|devin|guardrail|alignment|red.?team|augment.?code|rust.?lang|cargo|tokio"
+max_items = 30
+seen_expire_days = 90
+
+# HN 服务端过滤 (20)
+[[feeds]]
+name = "HN:agentic-coding"
+url = "https://hnrss.org/newest?q=agentic+coding&points=5&count=30"
+skip_filter = true
+
+[[feeds]]
+name = "HN:vibe-coding"
+url = "https://hnrss.org/newest?q=vibe+coding&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:AI-coding-agent"
+url = "https://hnrss.org/newest?q=AI+coding+agent&points=10&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:claude-code"
+url = "https://hnrss.org/newest?q=claude+code&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:context-engineering"
+url = "https://hnrss.org/newest?q=context+engineering&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:spec-driven"
+url = "https://hnrss.org/newest?q=spec+driven+development&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:harness-engineering"
+url = "https://hnrss.org/newest?q=harness+engineering&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:mcp-protocol"
+url = "https://hnrss.org/newest?q=model+context+protocol&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:cursor-ai"
+url = "https://hnrss.org/newest?q=cursor+AI&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:copilot-agent"
+url = "https://hnrss.org/newest?q=copilot+agent&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:llm-safety"
+url = "https://hnrss.org/newest?q=llm+safety&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:devin"
+url = "https://hnrss.org/newest?q=devin+cognition&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:openai-codex"
+url = "https://hnrss.org/newest?q=openai+codex&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:anthropic"
+url = "https://hnrss.org/newest?q=anthropic&points=10&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:ai-agents"
+url = "https://hnrss.org/newest?q=AI+agents&points=10&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:llm-eval"
+url = "https://hnrss.org/newest?q=LLM+evaluation&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:ai-safety"
+url = "https://hnrss.org/newest?q=AI+safety&points=10&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:rag-retrieval"
+url = "https://hnrss.org/newest?q=RAG+retrieval&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:windsurf"
+url = "https://hnrss.org/newest?q=windsurf+codeium&points=5&count=20"
+skip_filter = true
+
+[[feeds]]
+name = "HN:augment-code"
+url = "https://hnrss.org/newest?q=augment+code+AI&points=5&count=20"
+skip_filter = true
+
+# 核心博客 (14)
+[[feeds]]
+name = "SimonWillison"
+url = "https://simonwillison.net/atom/everything/"
+
+[[feeds]]
+name = "MartinFowler"
+url = "https://martinfowler.com/feed.atom"
+
+[[feeds]]
+name = "LilianWeng"
+url = "https://lilianweng.github.io/lil-log/feed.xml"
+
+[[feeds]]
+name = "JayAlammar"
+url = "https://jalammar.github.io/feed.xml"
+
+[[feeds]]
+name = "ChipHuyen"
+url = "https://huyenchip.com/feed"
+
+[[feeds]]
+name = "AddyOsmani"
+url = "https://addyo.substack.com/feed"
+
+[[feeds]]
+name = "LatentSpace"
+url = "https://www.latent.space/feed"
+
+[[feeds]]
+name = "Karpathy"
+url = "https://karpathy.github.io/feed.xml"
+
+[[feeds]]
+name = "EugeneYan"
+url = "https://eugeneyan.com/rss/"
+
+[[feeds]]
+name = "Swyx"
+url = "https://www.swyx.io/rss.xml"
+
+[[feeds]]
+name = "OneUsefulThing"
+url = "https://www.oneusefulthing.org/feed"
+
+[[feeds]]
+name = "SebastianRaschka"
+url = "https://magazine.sebastianraschka.com/feed"
+
+[[feeds]]
+name = "BenEvans"
+url = "https://www.ben-evans.com/benedictevans?format=rss"
+
+[[feeds]]
+name = "Aider"
+url = "https://aider.chat/feed.xml"
+
+# Newsletters / Substacks (14)
+[[feeds]]
+name = "TheSequence"
+url = "https://thesequence.substack.com/feed"
+
+[[feeds]]
+name = "ImportAI"
+url = "https://importai.substack.com/feed"
+
+[[feeds]]
+name = "JackClark"
+url = "https://jack-clark.net/feed/"
+
+[[feeds]]
+name = "Interconnects"
+url = "https://www.interconnects.ai/feed"
+
+[[feeds]]
+name = "SemiAnalysis"
+url = "https://www.semianalysis.com/feed"
+
+[[feeds]]
+name = "ZviMowshowitz"
+url = "https://thezvi.substack.com/feed"
+
+[[feeds]]
+name = "AstralCodex"
+url = "https://www.astralcodexten.com/feed"
+
+[[feeds]]
+name = "ChinaAI"
+url = "https://chinai.substack.com/feed"
+
+[[feeds]]
+name = "Stratechery"
+url = "https://stratechery.com/feed/"
+
+[[feeds]]
+name = "NotBoring"
+url = "https://www.notboring.co/feed"
+
+[[feeds]]
+name = "BensBites"
+url = "https://www.bensbites.com/feed"
+
+[[feeds]]
+name = "PragmaticEngineer"
+url = "https://newsletter.pragmaticengineer.com/feed"
+
+[[feeds]]
+name = "AlignmentForum"
+url = "https://www.alignmentforum.org/feed.xml"
+
+[[feeds]]
+name = "LexFridman"
+url = "https://lexfridman.com/feed/podcast/"
+
+# AI 新闻聚合 (4)
+[[feeds]]
+name = "LastWeekInAI"
+url = "https://lastweekin.ai/feed"
+
+[[feeds]]
+name = "TransformerNews"
+url = "https://www.transformernews.ai/feed"
+
+[[feeds]]
+name = "AISafetyNewsletter"
+url = "https://newsletter.safe.ai/feed"
+
+[[feeds]]
+name = "PracticalAI"
+url = "https://changelog.com/practicalai/feed"
+
+# 科技媒体 (6)
+[[feeds]]
+name = "TechCrunch:AI"
+url = "https://techcrunch.com/category/artificial-intelligence/feed/"
+
+[[feeds]]
+name = "TheVerge:AI"
+url = "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+
+[[feeds]]
+name = "ArsTechnica"
+url = "https://feeds.arstechnica.com/arstechnica/technology-lab"
+
+[[feeds]]
+name = "MITTechReview"
+url = "https://www.technologyreview.com/feed/"
+
+[[feeds]]
+name = "VentureBeat:AI"
+url = "https://venturebeat.com/category/ai/feed/"
+
+[[feeds]]
+name = "InfoQ:AI"
+url = "https://feed.infoq.com/ai-ml-data-eng"
+
+# 社区 (2)
+[[feeds]]
+name = "Lobsters:ai"
+url = "https://lobste.rs/t/ai.rss"
+
+[[feeds]]
+name = "LessWrong"
+url = "https://www.lesswrong.com/feed.xml"
+
+# 学术 (4)
+[[feeds]]
+name = "arXiv:cs.SE"
+url = "https://rss.arxiv.org/rss/cs.SE"
+
+[[feeds]]
+name = "arXiv:cs.AI"
+url = "https://export.arxiv.org/rss/cs.AI"
+
+[[feeds]]
+name = "arXiv:cs.CL"
+url = "https://export.arxiv.org/rss/cs.CL"
+
+[[feeds]]
+name = "arXiv:cs.LG"
+url = "https://export.arxiv.org/rss/cs.LG"
+
+# 行业官方 (17)
+[[feeds]]
+name = "OpenAI"
+url = "https://openai.com/blog/rss.xml"
+
+[[feeds]]
+name = "AnthropicEng"
+url = "https://raw.githubusercontent.com/conoro/anthropic-engineering-rss-feed/main/anthropic_engineering_rss.xml"
+
+[[feeds]]
+name = "AnthropicNews"
+url = "https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml"
+
+[[feeds]]
+name = "LangChain"
+url = "https://blog.langchain.com/rss"
+
+[[feeds]]
+name = "HuggingFace"
+url = "https://huggingface.co/blog/feed.xml"
+
+[[feeds]]
+name = "GoogleResearch"
+url = "https://research.google/blog/rss/"
+
+[[feeds]]
+name = "GoogleDevBlog"
+url = "https://developers.googleblog.com/feeds/posts/default"
+
+[[feeds]]
+name = "DeepMind"
+url = "https://deepmind.google/blog/rss.xml"
+
+[[feeds]]
+name = "MetaEngineering"
+url = "https://engineering.fb.com/feed/"
+
+[[feeds]]
+name = "MSResearch"
+url = "https://www.microsoft.com/en-us/research/feed/"
+
+[[feeds]]
+name = "BAIR"
+url = "https://bair.berkeley.edu/blog/feed.xml"
+
+[[feeds]]
+name = "NvidiaDev"
+url = "https://developer.nvidia.com/blog/feed"
+
+[[feeds]]
+name = "Replit"
+url = "https://blog.replit.com/feed.xml"
+
+[[feeds]]
+name = "Vercel"
+url = "https://vercel.com/atom"
+
+[[feeds]]
+name = "Together"
+url = "https://www.together.ai/blog/rss.xml"
+
+[[feeds]]
+name = "CrewAI"
+url = "https://blog.crewai.com/feed"
+
+[[feeds]]
+name = "Sourcegraph"
+url = "https://sourcegraph.com/blog/rss.xml"
+
+# 竞品 (2)
+[[feeds]]
+name = "AugmentCode"
+url = "https://www.augmentcode.com/blog/rss.xml"
+
+[[feeds]]
+name = "Kagi"
+url = "https://blog.kagi.com/rss.xml"
+
+# GitHub Releases (19)
+[[feeds]]
+name = "GH:claude-code"
+url = "https://github.com/anthropics/claude-code/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:openai-codex"
+url = "https://github.com/openai/codex/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:aider"
+url = "https://github.com/paul-gauthier/aider/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:cursor"
+url = "https://github.com/getcursor/cursor/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:continue"
+url = "https://github.com/continuedev/continue/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:copilot"
+url = "https://github.com/microsoft/vscode-copilot-release/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:langchain"
+url = "https://github.com/langchain-ai/langchain/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:llamaindex"
+url = "https://github.com/run-llama/llama_index/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:dspy"
+url = "https://github.com/stanfordnlp/dspy/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:ollama"
+url = "https://github.com/ollama/ollama/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:crewai"
+url = "https://github.com/crewAIInc/crewAI/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:autogen"
+url = "https://github.com/microsoft/autogen/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:open-interpreter"
+url = "https://github.com/OpenInterpreter/open-interpreter/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:swebench"
+url = "https://github.com/princeton-nlp/SWE-bench/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:cline"
+url = "https://github.com/cline/cline/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:zed"
+url = "https://github.com/zed-industries/zed/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:tabnine"
+url = "https://github.com/codota/tabnine-vscode/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:amazon-q"
+url = "https://github.com/aws/amazon-q-developer-cli/releases.atom"
+skip_filter = true
+
+[[feeds]]
+name = "GH:bolt"
+url = "https://github.com/stackblitz/bolt.new/releases.atom"
+skip_filter = true
+
+# GitHub Blog (2)
+[[feeds]]
+name = "GitHubBlog"
+url = "https://github.blog/feed/"
+
+[[feeds]]
+name = "GitHubChangelog"
+url = "https://github.blog/changelog/feed/"
+
+# Rust 生态 (2)
+[[feeds]]
+name = "ThisWeekInRust"
+url = "https://this-week-in-rust.org/atom.xml"
+skip_filter = true
+
+[[feeds]]
+name = "RustBlog"
+url = "https://blog.rust-lang.org/feed.xml"
+skip_filter = true
+
+# YouTube AI (4)
+[[feeds]]
+name = "YT:Fireship"
+url = "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"
+
+[[feeds]]
+name = "YT:YannicKilcher"
+url = "https://www.youtube.com/feeds/videos.xml?channel_id=UCZHmQk67mSJgfCCTn7xBfew"
+
+[[feeds]]
+name = "YT:TwoMinutePapers"
+url = "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg"
+
+[[feeds]]
+name = "YT:AIExplained"
+url = "https://www.youtube.com/feeds/videos.xml?channel_id=UCNJ1Ymd5yFuUPtn21xtRbbw"
+
+# MLOps / Infra (3)
+[[feeds]]
+name = "MLOps"
+url = "https://mlops.community/feed/"
+
+[[feeds]]
+name = "ByteByteGo"
+url = "https://blog.bytebytego.com/feed"
+
+[[feeds]]
+name = "TheNewStack"
+url = "https://thenewstack.io/feed/"

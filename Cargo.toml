@@ -1,0 +1,15 @@
+[package]
+name = "rss-scout"
+version = "0.1.0"
+edition = "2021"
+description = "Zero-API knowledge discovery for AI dev domain"
+
+[dependencies]
+feed-rs = "2"
+ureq = "2"
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+regex = "1"
+chrono = "0.4"
+url = "2"

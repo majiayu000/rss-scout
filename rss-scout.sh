@@ -15,17 +15,33 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PARSER="$SCRIPT_DIR/parse_feed.py"
 FILTER="$SCRIPT_DIR/filter_entries.py"
 
-KEYWORDS="agentic|vibe.?cod|ai.?cod|coding.?agent|claude.?code|cursor.?ai|copilot|llm.?tool|ai.?engineer|context.?engineer|mcp|harness|code.?gen|ai.?pair|prompt.?engineer|llm.?agent|rag|fine.?tun"
+KEYWORDS="agentic|vibe.?cod|ai.?cod|coding.?agent|claude.?code|cursor.?ai|copilot|llm.?tool|ai.?engineer|context.?engineer|mcp|harness|code.?gen|ai.?pair|prompt.?engineer|llm.?agent|rag|fine.?tun|tool.?use|function.?call|agentic.?ide|windsurf|swe.?bench|swe.?agent|code.?review|cline|devin|guardrail|alignment|red.?team|augment.?code|rust.?lang|cargo|tokio"
 
 # ── 源定义 (名称|URL|skip_filter) ─────────────────────
+# 共 113 源 (更新于 2026-03-24)
 FEEDS=(
-  # ── HN 服务端过滤 ──
+  # ── HN 服务端过滤 (20) ──
   "HN:agentic-coding|https://hnrss.org/newest?q=agentic+coding&points=5&count=30|1"
   "HN:vibe-coding|https://hnrss.org/newest?q=vibe+coding&points=5&count=20|1"
   "HN:AI-coding-agent|https://hnrss.org/newest?q=AI+coding+agent&points=10&count=20|1"
   "HN:claude-code|https://hnrss.org/newest?q=claude+code&points=5&count=20|1"
   "HN:context-engineering|https://hnrss.org/newest?q=context+engineering&points=5&count=20|1"
-  # ── 核心博客 ──
+  "HN:spec-driven|https://hnrss.org/newest?q=spec+driven+development&points=5&count=20|1"
+  "HN:harness-engineering|https://hnrss.org/newest?q=harness+engineering&points=5&count=20|1"
+  "HN:mcp-protocol|https://hnrss.org/newest?q=model+context+protocol&points=5&count=20|1"
+  "HN:cursor-ai|https://hnrss.org/newest?q=cursor+AI&points=5&count=20|1"
+  "HN:copilot-agent|https://hnrss.org/newest?q=copilot+agent&points=5&count=20|1"
+  "HN:llm-safety|https://hnrss.org/newest?q=llm+safety&points=5&count=20|1"
+  "HN:devin|https://hnrss.org/newest?q=devin+cognition&points=5&count=20|1"
+  "HN:openai-codex|https://hnrss.org/newest?q=openai+codex&points=5&count=20|1"
+  "HN:anthropic|https://hnrss.org/newest?q=anthropic&points=10&count=20|1"
+  "HN:ai-agents|https://hnrss.org/newest?q=AI+agents&points=10&count=20|1"
+  "HN:llm-eval|https://hnrss.org/newest?q=LLM+evaluation&points=5&count=20|1"
+  "HN:ai-safety|https://hnrss.org/newest?q=AI+safety&points=10&count=20|1"
+  "HN:rag-retrieval|https://hnrss.org/newest?q=RAG+retrieval&points=5&count=20|1"
+  "HN:windsurf|https://hnrss.org/newest?q=windsurf+codeium&points=5&count=20|1"
+  "HN:augment-code|https://hnrss.org/newest?q=augment+code+AI&points=5&count=20|1"
+  # ── 核心博客 (14) ──
   "SimonWillison|https://simonwillison.net/atom/everything/|0"
   "MartinFowler|https://martinfowler.com/feed.atom|0"
   "LilianWeng|https://lilianweng.github.io/lil-log/feed.xml|0"
@@ -33,21 +49,104 @@ FEEDS=(
   "ChipHuyen|https://huyenchip.com/feed|0"
   "AddyOsmani|https://addyo.substack.com/feed|0"
   "LatentSpace|https://www.latent.space/feed|0"
-  # ── 社区 ──
+  "Karpathy|https://karpathy.github.io/feed.xml|0"
+  "EugeneYan|https://eugeneyan.com/rss/|0"
+  "Swyx|https://www.swyx.io/rss.xml|0"
+  "OneUsefulThing|https://www.oneusefulthing.org/feed|0"
+  "SebastianRaschka|https://magazine.sebastianraschka.com/feed|0"
+  "BenEvans|https://www.ben-evans.com/benedictevans?format=rss|0"
+  "Aider|https://aider.chat/feed.xml|0"
+  # ── Newsletters / Substacks (14) ──
+  "TheSequence|https://thesequence.substack.com/feed|0"
+  "ImportAI|https://importai.substack.com/feed|0"
+  "JackClark|https://jack-clark.net/feed/|0"
+  "Interconnects|https://www.interconnects.ai/feed|0"
+  "SemiAnalysis|https://www.semianalysis.com/feed|0"
+  "ZviMowshowitz|https://thezvi.substack.com/feed|0"
+  "AstralCodex|https://www.astralcodexten.com/feed|0"
+  "ChinaAI|https://chinai.substack.com/feed|0"
+  "Stratechery|https://stratechery.com/feed/|0"
+  "NotBoring|https://www.notboring.co/feed|0"
+  "BensBites|https://www.bensbites.com/feed|0"
+  "PragmaticEngineer|https://newsletter.pragmaticengineer.com/feed|0"
+  "AlignmentForum|https://www.alignmentforum.org/feed.xml|0"
+  "LexFridman|https://lexfridman.com/feed/podcast/|0"
+  # ── AI 新闻聚合 (4) ──
+  "LastWeekInAI|https://lastweekin.ai/feed|0"
+  "TransformerNews|https://www.transformernews.ai/feed|0"
+  "AISafetyNewsletter|https://newsletter.safe.ai/feed|0"
+  "PracticalAI|https://changelog.com/practicalai/feed|0"
+  # ── 科技媒体 (6) ──
+  "TechCrunch:AI|https://techcrunch.com/category/artificial-intelligence/feed/|0"
+  "TheVerge:AI|https://www.theverge.com/rss/ai-artificial-intelligence/index.xml|0"
+  "ArsTechnica|https://feeds.arstechnica.com/arstechnica/technology-lab|0"
+  "MITTechReview|https://www.technologyreview.com/feed/|0"
+  "VentureBeat:AI|https://venturebeat.com/category/ai/feed/|0"
+  "InfoQ:AI|https://feed.infoq.com/ai-ml-data-eng|0"
+  # ── 社区 (2) ──
   "Lobsters:ai|https://lobste.rs/t/ai.rss|0"
   "LessWrong|https://www.lesswrong.com/feed.xml|0"
-  # ── 学术 ──
+  # ── 学术 (4) ──
   "arXiv:cs.SE|https://rss.arxiv.org/rss/cs.SE|0"
   "arXiv:cs.AI|https://export.arxiv.org/rss/cs.AI|0"
   "arXiv:cs.CL|https://export.arxiv.org/rss/cs.CL|0"
   "arXiv:cs.LG|https://export.arxiv.org/rss/cs.LG|0"
-  # ── 行业 ──
+  # ── 行业官方 (17) ──
   "OpenAI|https://openai.com/blog/rss.xml|0"
+  "AnthropicEng|https://raw.githubusercontent.com/conoro/anthropic-engineering-rss-feed/main/anthropic_engineering_rss.xml|0"
+  "AnthropicNews|https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml|0"
   "LangChain|https://blog.langchain.com/rss|0"
   "HuggingFace|https://huggingface.co/blog/feed.xml|0"
   "GoogleResearch|https://research.google/blog/rss/|0"
+  "GoogleDevBlog|https://developers.googleblog.com/feeds/posts/default|0"
+  "DeepMind|https://deepmind.google/blog/rss.xml|0"
+  "MetaEngineering|https://engineering.fb.com/feed/|0"
+  "MSResearch|https://www.microsoft.com/en-us/research/feed/|0"
   "BAIR|https://bair.berkeley.edu/blog/feed.xml|0"
   "NvidiaDev|https://developer.nvidia.com/blog/feed|0"
+  "Replit|https://blog.replit.com/feed.xml|0"
+  "Vercel|https://vercel.com/atom|0"
+  "Together|https://www.together.ai/blog/rss.xml|0"
+  "CrewAI|https://blog.crewai.com/feed|0"
+  "Sourcegraph|https://sourcegraph.com/blog/rss.xml|0"
+  # ── 竞品 (2) ──
+  "AugmentCode|https://www.augmentcode.com/blog/rss.xml|0"
+  "Kagi|https://blog.kagi.com/rss.xml|0"
+  # ── GitHub Releases (19) ──
+  "GH:claude-code|https://github.com/anthropics/claude-code/releases.atom|1"
+  "GH:openai-codex|https://github.com/openai/codex/releases.atom|1"
+  "GH:aider|https://github.com/paul-gauthier/aider/releases.atom|1"
+  "GH:cursor|https://github.com/getcursor/cursor/releases.atom|1"
+  "GH:continue|https://github.com/continuedev/continue/releases.atom|1"
+  "GH:copilot|https://github.com/microsoft/vscode-copilot-release/releases.atom|1"
+  "GH:langchain|https://github.com/langchain-ai/langchain/releases.atom|1"
+  "GH:llamaindex|https://github.com/run-llama/llama_index/releases.atom|1"
+  "GH:dspy|https://github.com/stanfordnlp/dspy/releases.atom|1"
+  "GH:ollama|https://github.com/ollama/ollama/releases.atom|1"
+  "GH:crewai|https://github.com/crewAIInc/crewAI/releases.atom|1"
+  "GH:autogen|https://github.com/microsoft/autogen/releases.atom|1"
+  "GH:open-interpreter|https://github.com/OpenInterpreter/open-interpreter/releases.atom|1"
+  "GH:swebench|https://github.com/princeton-nlp/SWE-bench/releases.atom|1"
+  "GH:cline|https://github.com/cline/cline/releases.atom|1"
+  "GH:zed|https://github.com/zed-industries/zed/releases.atom|1"
+  "GH:tabnine|https://github.com/codota/tabnine-vscode/releases.atom|1"
+  "GH:amazon-q|https://github.com/aws/amazon-q-developer-cli/releases.atom|1"
+  "GH:bolt|https://github.com/stackblitz/bolt.new/releases.atom|1"
+  # ── GitHub Blog (2) ──
+  "GitHubBlog|https://github.blog/feed/|0"
+  "GitHubChangelog|https://github.blog/changelog/feed/|0"
+  # ── Rust 生态 (2) ──
+  "ThisWeekInRust|https://this-week-in-rust.org/atom.xml|1"
+  "RustBlog|https://blog.rust-lang.org/feed.xml|1"
+  # ── YouTube AI (4) ──
+  "YT:Fireship|https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA|0"
+  "YT:YannicKilcher|https://www.youtube.com/feeds/videos.xml?channel_id=UCZHmQk67mSJgfCCTn7xBfew|0"
+  "YT:TwoMinutePapers|https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg|0"
+  "YT:AIExplained|https://www.youtube.com/feeds/videos.xml?channel_id=UCNJ1Ymd5yFuUPtn21xtRbbw|0"
+  # ── MLOps / Infra (3) ──
+  "MLOps|https://mlops.community/feed/|0"
+  "ByteByteGo|https://blog.bytebytego.com/feed|0"
+  "TheNewStack|https://thenewstack.io/feed/|0"
 )
 
 # ── 初始化 ────────────────────────────────────────────
@@ -101,9 +200,11 @@ for feed_spec in "${FEEDS[@]}"; do
   raw_count=$(wc -l < "$raw_file" | tr -d ' ')
   log "  解析 $raw_count 条"
 
-  # 过滤：去重 + 关键词
+  # 过滤：去重 + 关键词 + 归一化 (--compact 回写 seen.txt)
   filtered_file="$TEMP_DIR/${safe_name}_filtered.jsonl"
-  python3 "$FILTER" "$raw_file" "$SEEN_FILE" "$KEYWORDS" "$skip_filter" > "$filtered_file" 2>/dev/null
+  compact_flag=""
+  $DRY_RUN || compact_flag="--compact"
+  python3 "$FILTER" "$raw_file" "$SEEN_FILE" "$KEYWORDS" "$skip_filter" "$name" $compact_flag > "$filtered_file" 2>/dev/null
 
   match=$(wc -l < "$filtered_file" | tr -d ' ')
   TOTAL_COUNT=$((TOTAL_COUNT + raw_count))
@@ -131,15 +232,7 @@ for line in open('$filtered_file'):
         print(f'  \`{e[\"date\"]}\`')
 " 2>/dev/null
 
-    # 标记已见
-    if ! $DRY_RUN; then
-      python3 -c "
-import json
-for line in open('$filtered_file'):
-    e = json.loads(line.strip())
-    print(e['link'])
-" >> "$SEEN_FILE" 2>/dev/null
-    fi
+    # seen.txt 已由 filter_entries.py --compact 回写，无需额外追加
     echo ""
   } >> "$REPORT"
 done
