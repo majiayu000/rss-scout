@@ -194,7 +194,9 @@ fn check(data_dir: &Path) {
     eprintln!(
         "📡 Knowledge Scout: {date_part} 发现 {new_count} 条新内容，运行 /knowledge-scout 查看分析"
     );
-    let _ = fs::write(&read_marker, latest.to_string_lossy().as_ref());
+    if let Err(e) = fs::write(&read_marker, latest.to_string_lossy().as_ref()) {
+        eprintln!("[WARN] 写入 .last-read 失败: {e}");
+    }
 }
 
 fn find_latest_report(output_dir: &Path) -> Option<PathBuf> {

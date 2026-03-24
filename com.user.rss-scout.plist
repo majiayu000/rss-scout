@@ -7,8 +7,8 @@
   <string>com.user.rss-scout</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/bin/bash</string>
-    <string>/Users/lifcc/Desktop/code/AI/tools/rss-scout/rss-scout.sh</string>
+    <string>/Users/lifcc/.cargo/bin/rss-scout</string>
+    <string>run</string>
   </array>
   <key>StartCalendarInterval</key>
   <array>

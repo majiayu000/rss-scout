@@ -8,7 +8,10 @@ pub struct Entry {
 pub fn parse(data: &[u8], max_items: usize) -> Vec<Entry> {
     let feed = match feed_rs::parser::parse(data) {
         Ok(f) => f,
-        Err(_) => return Vec::new(),
+        Err(e) => {
+            eprintln!("[parser] feed 解析失败: {e}");
+            return Vec::new();
+        }
     };
 
     feed.entries
