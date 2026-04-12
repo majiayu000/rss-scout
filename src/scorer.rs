@@ -75,8 +75,6 @@ fn score_source(feed: &Feed) -> u8 {
     let name = &feed.name;
     if name.starts_with("GH:") {
         0
-    } else if name.starts_with("HN:") || name.starts_with("YT:") {
-        1
     } else {
         1
     }
@@ -98,9 +96,7 @@ fn score_keywords(title: &str, desc: &str, scoring: &ScoringConfig) -> u8 {
 
     if high_hits >= 2 {
         3
-    } else if high_hits == 1 {
-        2
-    } else if mid_hits >= 2 {
+    } else if high_hits == 1 || mid_hits >= 2 {
         2
     } else if mid_hits >= 1 {
         1
@@ -256,10 +252,7 @@ mod tests {
     #[test]
     fn test_keyword_mid_two_hits() {
         let scoring = make_scoring(&[], &["agent", "benchmark"]);
-        assert_eq!(
-            score_keywords("Agent benchmark results", "", &scoring),
-            2
-        );
+        assert_eq!(score_keywords("Agent benchmark results", "", &scoring), 2);
     }
 
     #[test]
