@@ -6,17 +6,14 @@ pub struct OpmlFeed {
     pub url: String,
 }
 
-static OUTLINE_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"<outline[^>]*>"#).expect("valid regex")
-});
+static OUTLINE_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"<outline[^>]*>"#).expect("valid regex"));
 
-static XML_URL_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"xmlUrl\s*=\s*"([^"]+)""#).expect("valid regex")
-});
+static XML_URL_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"xmlUrl\s*=\s*"([^"]+)""#).expect("valid regex"));
 
-static TEXT_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?:text|title)\s*=\s*"([^"]+)""#).expect("valid regex")
-});
+static TEXT_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"(?:text|title)\s*=\s*"([^"]+)""#).expect("valid regex"));
 
 /// Parse OPML XML content, extract all feed URLs with names.
 pub fn parse_opml(content: &str) -> Vec<OpmlFeed> {
@@ -66,10 +63,7 @@ mod tests {
         let feeds = parse_opml(opml);
         assert_eq!(feeds.len(), 2);
         assert_eq!(feeds[0].name, "Simon Willison");
-        assert_eq!(
-            feeds[0].url,
-            "https://simonwillison.net/atom/everything/"
-        );
+        assert_eq!(feeds[0].url, "https://simonwillison.net/atom/everything/");
         assert_eq!(feeds[1].name, "Hacker News");
     }
 

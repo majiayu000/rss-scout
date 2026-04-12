@@ -94,12 +94,15 @@ impl SeenDb {
 
     pub fn domain_count(&self, domain: &str) -> usize {
         let domain_lower = domain.to_lowercase();
-        self.entries.keys().filter(|url| {
-            url::Url::parse(url)
-                .ok()
-                .and_then(|u| u.host_str().map(|h| h.to_lowercase() == domain_lower))
-                .unwrap_or(false)
-        }).count()
+        self.entries
+            .keys()
+            .filter(|url| {
+                url::Url::parse(url)
+                    .ok()
+                    .and_then(|u| u.host_str().map(|h| h.to_lowercase() == domain_lower))
+                    .unwrap_or(false)
+            })
+            .count()
     }
 
     pub fn save(&self, path: &Path) -> Result<(), Box<dyn Error>> {
@@ -120,10 +123,7 @@ impl SeenDb {
             content.push('\n');
         }
         fs::write(path, content)?;
-        eprintln!(
-            "[dedup] 库大小 {} 条",
-            self.entries.len()
-        );
+        eprintln!("[dedup] 库大小 {} 条", self.entries.len());
         Ok(())
     }
 }
@@ -266,9 +266,7 @@ mod tests {
     #[test]
     fn test_old_format_migration() {
         // Use a recent timestamp (within 90-day expiry window)
-        let recent = chrono::Utc::now()
-            .format("%Y-%m-%dT%H:%M:%SZ")
-            .to_string();
+        let recent = chrono::Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string();
 
         let mut tmp = NamedTempFile::new().unwrap();
         writeln!(tmp, "https://example.com/old-post").unwrap();

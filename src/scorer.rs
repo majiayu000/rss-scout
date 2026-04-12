@@ -75,8 +75,6 @@ fn score_source(feed: &Feed) -> u8 {
     let name = &feed.name;
     if name.starts_with("GH:") {
         0
-    } else if name.starts_with("HN:") || name.starts_with("YT:") {
-        1
     } else {
         1
     }
@@ -98,9 +96,7 @@ fn score_keywords(title: &str, desc: &str, scoring: &ScoringConfig) -> u8 {
 
     if high_hits >= 2 {
         3
-    } else if high_hits == 1 {
-        2
-    } else if mid_hits >= 2 {
+    } else if high_hits == 1 || mid_hits >= 2 {
         2
     } else if mid_hits >= 1 {
         1
@@ -256,10 +252,7 @@ mod tests {
     #[test]
     fn test_keyword_mid_two_hits() {
         let scoring = make_scoring(&[], &["agent", "benchmark"]);
-        assert_eq!(
-            score_keywords("Agent benchmark results", "", &scoring),
-            2
-        );
+        assert_eq!(score_keywords("Agent benchmark results", "", &scoring), 2);
     }
 
     #[test]
@@ -361,5 +354,50 @@ mod tests {
         // source=0, keyword=0, freshness=0, uniqueness=3 = 3 -> P2
         assert_eq!(scored.priority, Priority::P2);
         assert!(scored.score < 6);
+    }
+}
+
+#[cfg(test)]
+mod batch_tests {
+    use super::*;
+
+    #[test]
+    fn test_batch_scoring_uses_initial_seen_snapshot() {
+        let mut seen = SeenDb::load(std::path::Path::new("/dev/null"), 90).unwrap();
+        seen.mark_seen("https://batch-domain.com/history-1");
+        seen.mark_seen("https://batch-domain.com/history-2");
+        seen.mark_seen("https://batch-domain.com/history-3");
+
+        let scoring = ScoringConfig {
+            keywords_high: Vec::new(),
+            keywords_mid: Vec::new(),
+        };
+        let feed = Feed {
+            name: "Blog".to_string(),
+            url: String::new(),
+            skip_filter: false,
+            tier: Some("aggregator".to_string()),
+            kind: None,
+        };
+        let first = Entry {
+            title: "Post 1".to_string(),
+            desc: String::new(),
+            link: "https://batch-domain.com/new-1".to_string(),
+            date: String::new(),
+            image: None,
+        };
+        let second = Entry {
+            title: "Post 2".to_string(),
+            desc: String::new(),
+            link: "https://batch-domain.com/new-2".to_string(),
+            date: String::new(),
+            image: None,
+        };
+
+        let first_scored = score_entry(&first, &feed, &scoring, &seen);
+        let second_scored = score_entry(&second, &feed, &scoring, &seen);
+
+        assert_eq!(first_scored.breakdown[3], 2);
+        assert_eq!(second_scored.breakdown[3], 2);
     }
 }
