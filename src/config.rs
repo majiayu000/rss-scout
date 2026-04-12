@@ -4,12 +4,14 @@ use std::fs;
 use std::path::Path;
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Config {
     pub settings: Settings,
     pub feeds: Vec<Feed>,
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Settings {
     pub keywords: String,
     #[serde(default = "default_max_items")]
@@ -21,6 +23,7 @@ pub struct Settings {
 }
 
 #[derive(Deserialize, Default)]
+#[serde(deny_unknown_fields)]
 pub struct ScoringConfig {
     #[serde(default)]
     pub keywords_high: Vec<String>,
@@ -29,6 +32,7 @@ pub struct ScoringConfig {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Feed {
     pub name: String,
     pub url: String,
@@ -49,9 +53,57 @@ fn default_expire_days() -> u64 {
 }
 
 pub fn load(path: &Path) -> Result<Config, Box<dyn Error>> {
-    let content = fs::read_to_string(path)
-        .map_err(|e| format!("无法读取 {}: {e}", path.display()))?;
-    let config: Config = toml::from_str(&content)
-        .map_err(|e| format!("解析 {}: {e}", path.display()))?;
+    let content =
+        fs::read_to_string(path).map_err(|e| format!("无法读取 {}: {e}", path.display()))?;
+    let config: Config =
+        toml::from_str(&content).map_err(|e| format!("解析 {}: {e}", path.display()))?;
     Ok(config)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Config;
+
+    #[test]
+    fn parses_valid_config() {
+        let config = toml::from_str::<Config>(
+            r#"
+[settings]
+keywords = "claude"
+
+[[feeds]]
+name = "Example"
+url = "https://example.com/feed.xml"
+"#,
+        )
+        .expect("valid config should parse");
+
+        assert_eq!(config.settings.keywords, "claude");
+        assert_eq!(config.feeds.len(), 1);
+    }
+
+    #[test]
+    fn rejects_removed_notion_section() {
+        let result = toml::from_str::<Config>(
+            r#"
+[settings]
+keywords = "claude"
+
+[notion]
+enabled = true
+database_id = "db_123"
+
+[[feeds]]
+name = "Example"
+url = "https://example.com/feed.xml"
+"#,
+        );
+
+        let error = match result {
+            Ok(_) => panic!("removed notion config should be rejected"),
+            Err(error) => error,
+        };
+
+        assert!(error.to_string().contains("unknown field `notion`"));
+    }
 }
