@@ -16,6 +16,16 @@ pub struct Settings {
     pub max_items: usize,
     #[serde(default = "default_expire_days")]
     pub seen_expire_days: u64,
+    #[serde(default)]
+    pub scoring: ScoringConfig,
+}
+
+#[derive(Deserialize, Default)]
+pub struct ScoringConfig {
+    #[serde(default)]
+    pub keywords_high: Vec<String>,
+    #[serde(default)]
+    pub keywords_mid: Vec<String>,
 }
 
 #[derive(Deserialize)]
@@ -24,6 +34,10 @@ pub struct Feed {
     pub url: String,
     #[serde(default)]
     pub skip_filter: bool,
+    #[serde(default)]
+    pub tier: Option<String>,
+    #[serde(default)]
+    pub kind: Option<String>,
 }
 
 fn default_max_items() -> usize {

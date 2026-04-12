@@ -13,3 +13,7 @@ toml = "0.8"
 regex = "1"
 chrono = "0.4"
 url = "2"
+rayon = "1"
+
+[dev-dependencies]
+tempfile = "3.27.0"

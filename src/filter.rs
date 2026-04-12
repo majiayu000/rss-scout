@@ -111,3 +111,150 @@ fn arxiv_category_ok(entry: &Entry) -> bool {
         .iter()
         .any(|cat| ARXIV_ALLOWED_CATEGORIES.contains(cat))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn make_entry(title: &str, desc: &str, link: &str) -> Entry {
+        Entry {
+            title: title.to_string(),
+            desc: desc.to_string(),
+            link: link.to_string(),
+            date: String::new(),
+            image: None,
+        }
+    }
+
+    // --- arxiv positive (should pass) ---
+
+    #[test]
+    fn test_arxiv_positive_llm_code_agent() {
+        let entry = make_entry(
+            "SWE-Agent: LLM-Based Autonomous Coding Agent for Software Engineering",
+            "We present an autonomous agent using large language models for code generation and agentic coding tasks. cs.SE cs.AI",
+            "https://arxiv.org/abs/2405.00001",
+        );
+        assert!(passes_arxiv_filter(&entry));
+    }
+
+    #[test]
+    fn test_arxiv_positive_rag_retrieval() {
+        let entry = make_entry(
+            "Retrieval-Augmented Generation for Code Review",
+            "A RAG system for automated code review using transformer models. cs.CL cs.SE",
+            "https://arxiv.org/abs/2405.00002",
+        );
+        assert!(passes_arxiv_filter(&entry));
+    }
+
+    #[test]
+    fn test_arxiv_positive_multi_agent() {
+        let entry = make_entry(
+            "Multi-Agent Collaboration for Software Development",
+            "Autonomous agent systems with chain-of-thought reasoning for code generation. cs.AI",
+            "https://arxiv.org/abs/2405.00003",
+        );
+        assert!(passes_arxiv_filter(&entry));
+    }
+
+    // --- arxiv negative (should be filtered) ---
+
+    #[test]
+    fn test_arxiv_negative_medical() {
+        let entry = make_entry(
+            "Deep Learning for Medical Image Diagnosis",
+            "Clinical pathology analysis using neural networks for patient disease detection. cs.AI",
+            "https://arxiv.org/abs/2405.10001",
+        );
+        assert!(!passes_arxiv_filter(&entry));
+    }
+
+    #[test]
+    fn test_arxiv_negative_legal() {
+        let entry = make_entry(
+            "NLP for Legal Document Analysis",
+            "Using language models for legal jurisprudence and litigation document processing. cs.CL",
+            "https://arxiv.org/abs/2405.10002",
+        );
+        assert!(!passes_arxiv_filter(&entry));
+    }
+
+    #[test]
+    fn test_arxiv_negative_biology() {
+        let entry = make_entry(
+            "Protein Structure Prediction with Transformers",
+            "Molecular biology and genomic analysis using deep learning for DNA sequence alignment. cs.AI",
+            "https://arxiv.org/abs/2405.10003",
+        );
+        assert!(!passes_arxiv_filter(&entry));
+    }
+
+    // --- arxiv category ---
+
+    #[test]
+    fn test_arxiv_category_allowed() {
+        let entry = make_entry(
+            "GPT for Code Generation",
+            "Large language model code agent. cs.SE cs.AI",
+            "https://arxiv.org/abs/2405.20001",
+        );
+        assert!(passes_arxiv_filter(&entry));
+    }
+
+    #[test]
+    fn test_arxiv_category_disallowed() {
+        let entry = make_entry(
+            "GPT for Code Generation",
+            "Large language model code agent. cs.RO",
+            "https://arxiv.org/abs/2405.20002",
+        );
+        // cs.RO is not in allowed categories
+        assert!(!passes_arxiv_filter(&entry));
+    }
+
+    #[test]
+    fn test_arxiv_category_no_category_passes() {
+        // No category mentioned — defaults to pass
+        let entry = make_entry(
+            "Autonomous Agent for Agentic Coding with LLM",
+            "Multi-agent code generation system",
+            "https://arxiv.org/abs/2405.20003",
+        );
+        assert!(passes_arxiv_filter(&entry));
+    }
+
+    // --- keyword filter ---
+
+    #[test]
+    fn test_keyword_filter_match() {
+        let re = Regex::new(r"(?i)claude|mcp|agent").unwrap();
+        let entry = make_entry("Claude Code MCP update", "", "https://example.com");
+        assert!(passes_keyword_filter(&entry, &re));
+    }
+
+    #[test]
+    fn test_keyword_filter_no_match() {
+        let re = Regex::new(r"(?i)claude|mcp|agent").unwrap();
+        let entry = make_entry("Weather forecast today", "", "https://example.com");
+        assert!(!passes_keyword_filter(&entry, &re));
+    }
+
+    #[test]
+    fn test_keyword_filter_match_in_desc() {
+        let re = Regex::new(r"(?i)claude|mcp|agent").unwrap();
+        let entry = make_entry("Some title", "Built with Claude", "https://example.com");
+        assert!(passes_keyword_filter(&entry, &re));
+    }
+
+    // --- is_arxiv_source ---
+
+    #[test]
+    fn test_is_arxiv_source() {
+        assert!(is_arxiv_source("arXiv:cs.AI"));
+        assert!(is_arxiv_source("Arxiv CS"));
+        assert!(is_arxiv_source("arxiv"));
+        assert!(!is_arxiv_source("HackerNews"));
+        assert!(!is_arxiv_source("blog"));
+    }
+}

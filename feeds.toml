@@ -3,509 +3,978 @@ keywords = "agentic|vibe.?cod|ai.?cod|coding.?agent|claude.?code|cursor.?ai|copi
 max_items = 30
 seen_expire_days = 90
 
+[settings.scoring]
+keywords_high = ["claude code", "mcp", "model context protocol", "agentic coding", "vibe coding", "context engineering", "harness engineering", "guardrail", "swe-bench", "alignment", "red team", "ai safety"]
+keywords_mid = ["agent", "benchmark", "evaluation", "fine-tuning", "rag", "prompt engineering", "code review", "rust", "cargo", "tokio", "coding agent", "copilot", "cursor", "windsurf", "devin"]
+
 # HN 服务端过滤 (20)
 [[feeds]]
 name = "HN:agentic-coding"
 url = "https://hnrss.org/newest?q=agentic+coding&points=5&count=30"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:vibe-coding"
 url = "https://hnrss.org/newest?q=vibe+coding&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:AI-coding-agent"
 url = "https://hnrss.org/newest?q=AI+coding+agent&points=10&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:claude-code"
 url = "https://hnrss.org/newest?q=claude+code&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:context-engineering"
 url = "https://hnrss.org/newest?q=context+engineering&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:spec-driven"
 url = "https://hnrss.org/newest?q=spec+driven+development&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:harness-engineering"
 url = "https://hnrss.org/newest?q=harness+engineering&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:mcp-protocol"
 url = "https://hnrss.org/newest?q=model+context+protocol&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:cursor-ai"
 url = "https://hnrss.org/newest?q=cursor+AI&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:copilot-agent"
 url = "https://hnrss.org/newest?q=copilot+agent&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:llm-safety"
 url = "https://hnrss.org/newest?q=llm+safety&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:devin"
 url = "https://hnrss.org/newest?q=devin+cognition&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:openai-codex"
 url = "https://hnrss.org/newest?q=openai+codex&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:anthropic"
 url = "https://hnrss.org/newest?q=anthropic&points=10&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:ai-agents"
 url = "https://hnrss.org/newest?q=AI+agents&points=10&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:llm-eval"
 url = "https://hnrss.org/newest?q=LLM+evaluation&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:ai-safety"
 url = "https://hnrss.org/newest?q=AI+safety&points=10&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:rag-retrieval"
 url = "https://hnrss.org/newest?q=RAG+retrieval&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:windsurf"
 url = "https://hnrss.org/newest?q=windsurf+codeium&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "HN:augment-code"
 url = "https://hnrss.org/newest?q=augment+code+AI&points=5&count=20"
 skip_filter = true
+tier = "aggregator"
+kind = "news"
 
 # 核心博客 (14)
 [[feeds]]
 name = "SimonWillison"
 url = "https://simonwillison.net/atom/everything/"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "MartinFowler"
 url = "https://martinfowler.com/feed.atom"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "LilianWeng"
 url = "https://lilianweng.github.io/lil-log/feed.xml"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "JayAlammar"
 url = "https://jalammar.github.io/feed.xml"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "ChipHuyen"
 url = "https://huyenchip.com/feed"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "AddyOsmani"
 url = "https://addyo.substack.com/feed"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "LatentSpace"
 url = "https://www.latent.space/feed"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "Karpathy"
 url = "https://karpathy.github.io/feed.xml"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "EugeneYan"
 url = "https://eugeneyan.com/rss/"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "Swyx"
 url = "https://www.swyx.io/rss.xml"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "OneUsefulThing"
 url = "https://www.oneusefulthing.org/feed"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "SebastianRaschka"
 url = "https://magazine.sebastianraschka.com/feed"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "BenEvans"
 url = "https://www.ben-evans.com/benedictevans?format=rss"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "Aider"
 url = "https://aider.chat/feed.xml"
+tier = "core"
+kind = "blog"
 
 # Newsletters / Substacks (14)
 [[feeds]]
 name = "TheSequence"
 url = "https://thesequence.substack.com/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "ImportAI"
 url = "https://importai.substack.com/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "JackClark"
 url = "https://jack-clark.net/feed/"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "Interconnects"
 url = "https://www.interconnects.ai/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "SemiAnalysis"
 url = "https://www.semianalysis.com/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "ZviMowshowitz"
 url = "https://thezvi.substack.com/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "AstralCodex"
 url = "https://www.astralcodexten.com/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "ChinaAI"
 url = "https://chinai.substack.com/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "Stratechery"
 url = "https://stratechery.com/feed/"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "NotBoring"
 url = "https://www.notboring.co/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "BensBites"
 url = "https://www.bensbites.com/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "PragmaticEngineer"
 url = "https://newsletter.pragmaticengineer.com/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "AlignmentForum"
 url = "https://www.alignmentforum.org/feed.xml"
+tier = "core"
+kind = "blog"
 
 [[feeds]]
 name = "LexFridman"
 url = "https://lexfridman.com/feed/podcast/"
+tier = "aggregator"
+kind = "podcast"
 
-# AI 新闻聚合 (4)
+# AI 新闻聚合 (5)
+[[feeds]]
+name = "AINews"
+url = "https://news.smol.ai/rss.xml"
+skip_filter = true
+tier = "aggregator"
+kind = "newsletter"
+
 [[feeds]]
 name = "LastWeekInAI"
 url = "https://lastweekin.ai/feed"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "TransformerNews"
 url = "https://www.transformernews.ai/feed"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "AISafetyNewsletter"
 url = "https://newsletter.safe.ai/feed"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "PracticalAI"
 url = "https://changelog.com/practicalai/feed"
+tier = "aggregator"
+kind = "podcast"
 
 # 科技媒体 (6)
 [[feeds]]
 name = "TechCrunch:AI"
 url = "https://techcrunch.com/category/artificial-intelligence/feed/"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "TheVerge:AI"
 url = "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "ArsTechnica"
 url = "https://feeds.arstechnica.com/arstechnica/technology-lab"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "MITTechReview"
 url = "https://www.technologyreview.com/feed/"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "VentureBeat:AI"
 url = "https://venturebeat.com/category/ai/feed/"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "InfoQ:AI"
 url = "https://feed.infoq.com/ai-ml-data-eng"
+tier = "aggregator"
+kind = "news"
 
 # 社区 (2)
 [[feeds]]
 name = "Lobsters:ai"
 url = "https://lobste.rs/t/ai.rss"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "LessWrong"
 url = "https://www.lesswrong.com/feed.xml"
+tier = "aggregator"
+kind = "blog"
 
 # 学术 (4)
 [[feeds]]
 name = "arXiv:cs.SE"
 url = "https://rss.arxiv.org/rss/cs.SE"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "arXiv:cs.AI"
 url = "https://export.arxiv.org/rss/cs.AI"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "arXiv:cs.CL"
 url = "https://export.arxiv.org/rss/cs.CL"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "arXiv:cs.LG"
 url = "https://export.arxiv.org/rss/cs.LG"
+tier = "aggregator"
+kind = "news"
 
 # 行业官方 (17)
 [[feeds]]
 name = "OpenAI"
 url = "https://openai.com/blog/rss.xml"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "AnthropicEng"
 url = "https://raw.githubusercontent.com/conoro/anthropic-engineering-rss-feed/main/anthropic_engineering_rss.xml"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "AnthropicNews"
 url = "https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "LangChain"
 url = "https://blog.langchain.com/rss"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "HuggingFace"
 url = "https://huggingface.co/blog/feed.xml"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "GoogleResearch"
 url = "https://research.google/blog/rss/"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "GoogleDevBlog"
 url = "https://developers.googleblog.com/feeds/posts/default"
+tier = "official"
+kind = "blog"
+
+[[feeds]]
+name = "GoogleKeyword"
+url = "https://blog.google/rss/"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "DeepMind"
 url = "https://deepmind.google/blog/rss.xml"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "MetaEngineering"
 url = "https://engineering.fb.com/feed/"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "MSResearch"
 url = "https://www.microsoft.com/en-us/research/feed/"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "BAIR"
 url = "https://bair.berkeley.edu/blog/feed.xml"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "NvidiaDev"
 url = "https://developer.nvidia.com/blog/feed"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "Replit"
 url = "https://blog.replit.com/feed.xml"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "Vercel"
 url = "https://vercel.com/atom"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "Together"
 url = "https://www.together.ai/blog/rss.xml"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "CrewAI"
 url = "https://blog.crewai.com/feed"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "Sourcegraph"
 url = "https://sourcegraph.com/blog/rss.xml"
+tier = "official"
+kind = "blog"
 
 # 竞品 (2)
 [[feeds]]
 name = "AugmentCode"
 url = "https://www.augmentcode.com/blog/rss.xml"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "Kagi"
 url = "https://blog.kagi.com/rss.xml"
+tier = "official"
+kind = "blog"
 
 # GitHub Releases (19)
 [[feeds]]
 name = "GH:claude-code"
 url = "https://github.com/anthropics/claude-code/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:openai-codex"
 url = "https://github.com/openai/codex/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:aider"
 url = "https://github.com/paul-gauthier/aider/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:cursor"
 url = "https://github.com/getcursor/cursor/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:continue"
 url = "https://github.com/continuedev/continue/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:copilot"
 url = "https://github.com/microsoft/vscode-copilot-release/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:langchain"
 url = "https://github.com/langchain-ai/langchain/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:llamaindex"
 url = "https://github.com/run-llama/llama_index/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:dspy"
 url = "https://github.com/stanfordnlp/dspy/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:ollama"
 url = "https://github.com/ollama/ollama/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:crewai"
 url = "https://github.com/crewAIInc/crewAI/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:autogen"
 url = "https://github.com/microsoft/autogen/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:open-interpreter"
 url = "https://github.com/OpenInterpreter/open-interpreter/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:swebench"
 url = "https://github.com/princeton-nlp/SWE-bench/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:cline"
 url = "https://github.com/cline/cline/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:zed"
 url = "https://github.com/zed-industries/zed/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:tabnine"
 url = "https://github.com/codota/tabnine-vscode/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:amazon-q"
 url = "https://github.com/aws/amazon-q-developer-cli/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "GH:bolt"
 url = "https://github.com/stackblitz/bolt.new/releases.atom"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 # GitHub Blog (2)
 [[feeds]]
 name = "GitHubBlog"
 url = "https://github.blog/feed/"
+tier = "official"
+kind = "blog"
 
 [[feeds]]
 name = "GitHubChangelog"
 url = "https://github.blog/changelog/feed/"
+tier = "release"
+kind = "changelog"
 
 # Rust 生态 (2)
 [[feeds]]
 name = "ThisWeekInRust"
 url = "https://this-week-in-rust.org/atom.xml"
 skip_filter = true
+tier = "release"
+kind = "changelog"
 
 [[feeds]]
 name = "RustBlog"
 url = "https://blog.rust-lang.org/feed.xml"
 skip_filter = true
+tier = "release"
+kind = "blog"
 
 # YouTube AI (4)
 [[feeds]]
 name = "YT:Fireship"
 url = "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "YT:YannicKilcher"
 url = "https://www.youtube.com/feeds/videos.xml?channel_id=UCZHmQk67mSJgfCCTn7xBfew"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "YT:TwoMinutePapers"
 url = "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg"
+tier = "aggregator"
+kind = "news"
 
 [[feeds]]
 name = "YT:AIExplained"
 url = "https://www.youtube.com/feeds/videos.xml?channel_id=UCNJ1Ymd5yFuUPtn21xtRbbw"
+tier = "aggregator"
+kind = "news"
 
 # MLOps / Infra (3)
 [[feeds]]
 name = "MLOps"
 url = "https://mlops.community/feed/"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "ByteByteGo"
 url = "https://blog.bytebytego.com/feed"
+tier = "aggregator"
+kind = "blog"
 
 [[feeds]]
 name = "TheNewStack"
 url = "https://thenewstack.io/feed/"
+tier = "aggregator"
+kind = "news"
+
+# 竞品 Changelog — Olshansk/rss-feeds (7)
+[[feeds]]
+name = "Olshansk:Anthropic-News"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml"
+tier = "official"
+kind = "blog"
+
+[[feeds]]
+name = "Olshansk:Anthropic-Research"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_research.xml"
+tier = "official"
+kind = "blog"
+
+[[feeds]]
+name = "Olshansk:Claude-Code-CL"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_changelog_claude_code.xml"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "Olshansk:Cursor"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_cursor.xml"
+tier = "official"
+kind = "blog"
+
+[[feeds]]
+name = "Olshansk:Windsurf-CL"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_windsurf_changelog.xml"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "Olshansk:Windsurf-Blog"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_windsurf_blog.xml"
+tier = "official"
+kind = "blog"
+
+[[feeds]]
+name = "Olshansk:xAI"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_xainews.xml"
+tier = "official"
+kind = "blog"
+
+# Cursor 版本追踪 (1)
+[[feeds]]
+name = "CursorVersions"
+url = "https://api.cursor-changelog.com/api/versions/rss"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+# GitHub Trending (5)
+[[feeds]]
+name = "GH-Trend:daily-all"
+url = "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "GH-Trend:daily-python"
+url = "https://mshibanami.github.io/GitHubTrendingRSS/daily/python.xml"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "GH-Trend:daily-rust"
+url = "https://mshibanami.github.io/GitHubTrendingRSS/daily/rust.xml"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "GH-Trend:daily-ts"
+url = "https://mshibanami.github.io/GitHubTrendingRSS/daily/typescript.xml"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "GH-Trend:weekly-all"
+url = "https://mshibanami.github.io/GitHubTrendingRSS/weekly/all.xml"
+tier = "aggregator"
+kind = "github"
+
+# 中文 AI 社区 (3)
+[[feeds]]
+name = "36kr"
+url = "https://36kr.com/feed"
+tier = "aggregator"
+kind = "news"
+
+[[feeds]]
+name = "Kexue"
+url = "https://kexue.fm/feed"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "Xinzhiyuan"
+url = "https://plink.anyfeeder.com/weixin/AI_era"
+tier = "aggregator"
+kind = "news"
+
+# 播客 (6)
+[[feeds]]
+name = "Dwarkesh"
+url = "https://api.substack.com/feed/podcast/69345.rss"
+tier = "aggregator"
+kind = "podcast"
+
+[[feeds]]
+name = "NoPriors"
+url = "https://feeds.megaphone.fm/nopriors"
+tier = "aggregator"
+kind = "podcast"
+
+[[feeds]]
+name = "TWIML"
+url = "https://feeds.megaphone.fm/MLN2155636147"
+tier = "aggregator"
+kind = "podcast"
+
+[[feeds]]
+name = "MLST"
+url = "https://anchor.fm/s/1e4a0eac/podcast/rss"
+tier = "aggregator"
+kind = "podcast"
+
+[[feeds]]
+name = "AIDailyBrief"
+url = "https://anchor.fm/s/f7cac464/podcast/rss"
+tier = "aggregator"
+kind = "podcast"
+
+[[feeds]]
+name = "HardFork"
+url = "https://feeds.simplecast.com/l2i9YnTd"
+tier = "aggregator"
+kind = "podcast"
+
+# 新增 P0+P1 源 (Phase 2)
+[[feeds]]
+name = "AppleML"
+url = "https://machinelearning.apple.com/feed.xml"
+tier = "official"
+kind = "blog"
+
+[[feeds]]
+name = "AmazonScience"
+url = "https://www.amazon.science/index.rss"
+tier = "official"
+kind = "blog"
+
+[[feeds]]
+name = "AISnakeOil"
+url = "https://aisnakeoil.substack.com/feed"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "TheGradient"
+url = "https://thegradient.pub/rss/"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "SemgrepBlog"
+url = "https://semgrep.dev/blog/rss"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "JetBrains"
+url = "https://blog.jetbrains.com/feed/"
+tier = "official"
+kind = "blog"
+
+[[feeds]]
+name = "WindsurfBlog"
+url = "https://windsurf.com/feed.xml"
+tier = "official"
+kind = "blog"
+
+[[feeds]]
+name = "CursorBlog"
+url = "https://cursor.com/atom.xml"
+tier = "official"
+kind = "blog"
+
+[[feeds]]
+name = "CursorChangelog"
+url = "https://cursor-changelog.com/feed"
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "ConfidentAI"
+url = "https://www.confident-ai.com/feed.xml"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "fast.ai"
+url = "https://www.fast.ai/index.xml"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "NicholasCarlini"
+url = "https://nicholas.carlini.com/writing/feed.xml"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "DwarkeshBlog"
+url = "https://www.dwarkesh.com/feed"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "Slashdot"
+url = "https://rss.slashdot.org/Slashdot/slashdotMain"
+tier = "aggregator"
+kind = "news"
+

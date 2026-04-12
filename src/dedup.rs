@@ -92,6 +92,16 @@ impl SeenDb {
         self.entries.len()
     }
 
+    pub fn domain_count(&self, domain: &str) -> usize {
+        let domain_lower = domain.to_lowercase();
+        self.entries.keys().filter(|url| {
+            url::Url::parse(url)
+                .ok()
+                .and_then(|u| u.host_str().map(|h| h.to_lowercase() == domain_lower))
+                .unwrap_or(false)
+        }).count()
+    }
+
     pub fn save(&self, path: &Path) -> Result<(), Box<dyn Error>> {
         let now_iso = Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string();
         let mut urls: Vec<&String> = self.entries.keys().collect();
@@ -161,4 +171,128 @@ pub fn normalize_url(raw: &str) -> String {
     };
 
     format!("{scheme}://{host}{port}{path}{query}")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+    use tempfile::NamedTempFile;
+
+    // --- normalize_url ---
+
+    #[test]
+    fn test_normalize_url_strips_utm() {
+        let raw = "https://example.com/page?utm_source=twitter&utm_medium=social&id=42";
+        assert_eq!(normalize_url(raw), "https://example.com/page?id=42");
+    }
+
+    #[test]
+    fn test_normalize_url_unifies_scheme() {
+        assert_eq!(
+            normalize_url("http://example.com/page"),
+            "https://example.com/page"
+        );
+    }
+
+    #[test]
+    fn test_normalize_url_trims_trailing_slash() {
+        assert_eq!(
+            normalize_url("https://example.com/blog/"),
+            "https://example.com/blog"
+        );
+    }
+
+    #[test]
+    fn test_normalize_url_root_slash_kept() {
+        assert_eq!(
+            normalize_url("https://example.com/"),
+            "https://example.com/"
+        );
+    }
+
+    #[test]
+    fn test_normalize_url_strips_all_tracking() {
+        let raw = "https://example.com/p?ref=hn&via=rss&fbclid=abc&gclid=def&real=1";
+        assert_eq!(normalize_url(raw), "https://example.com/p?real=1");
+    }
+
+    #[test]
+    fn test_normalize_url_invalid() {
+        assert_eq!(normalize_url("not-a-url"), "not-a-url");
+    }
+
+    // --- SeenDb lifecycle: mark_seen → is_seen → save → reload ---
+
+    #[test]
+    fn test_seen_lifecycle() {
+        let mut tmp = NamedTempFile::new().unwrap();
+        write!(tmp, "").unwrap();
+        let path = tmp.path().to_path_buf();
+
+        let mut db = SeenDb::load(&path, 90).unwrap();
+        assert!(!db.is_seen("https://example.com/a"));
+
+        db.mark_seen("https://example.com/a");
+        assert!(db.is_seen("https://example.com/a"));
+        assert_eq!(db.len(), 1);
+
+        // Save and reload
+        db.save(&path).unwrap();
+        let db2 = SeenDb::load(&path, 90).unwrap();
+        assert!(db2.is_seen("https://example.com/a"));
+        assert_eq!(db2.len(), 1);
+    }
+
+    // --- domain_count ---
+
+    #[test]
+    fn test_domain_count() {
+        let mut tmp = NamedTempFile::new().unwrap();
+        write!(tmp, "").unwrap();
+
+        let mut db = SeenDb::load(tmp.path(), 90).unwrap();
+        db.mark_seen("https://example.com/a");
+        db.mark_seen("https://example.com/b");
+        db.mark_seen("https://other.com/c");
+
+        assert_eq!(db.domain_count("example.com"), 2);
+        assert_eq!(db.domain_count("other.com"), 1);
+        assert_eq!(db.domain_count("unknown.com"), 0);
+    }
+
+    // --- old format migration (URL without timestamp) ---
+
+    #[test]
+    fn test_old_format_migration() {
+        // Use a recent timestamp (within 90-day expiry window)
+        let recent = chrono::Utc::now()
+            .format("%Y-%m-%dT%H:%M:%SZ")
+            .to_string();
+
+        let mut tmp = NamedTempFile::new().unwrap();
+        writeln!(tmp, "https://example.com/old-post").unwrap();
+        writeln!(tmp, "https://example.com/another|{recent}").unwrap();
+
+        let db = SeenDb::load(tmp.path(), 90).unwrap();
+        assert!(db.is_seen("https://example.com/old-post"));
+        assert!(db.is_seen("https://example.com/another"));
+        assert_eq!(db.len(), 2);
+    }
+
+    // --- dedup normalizes before checking ---
+
+    #[test]
+    fn test_dedup_normalizes() {
+        let mut tmp = NamedTempFile::new().unwrap();
+        write!(tmp, "").unwrap();
+
+        let mut db = SeenDb::load(tmp.path(), 90).unwrap();
+        db.mark_seen("https://example.com/page?utm_source=rss");
+
+        // Same URL without UTM should be considered seen
+        assert!(db.is_seen("https://example.com/page"));
+        // HTTP variant should also match (normalized to https)
+        assert!(db.is_seen("http://example.com/page"));
+    }
 }
