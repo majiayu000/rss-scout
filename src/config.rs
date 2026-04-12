@@ -8,17 +8,6 @@ use std::path::Path;
 pub struct Config {
     pub settings: Settings,
     pub feeds: Vec<Feed>,
-    #[serde(default, rename = "notion")]
-    _legacy_notion: Option<LegacyNotionConfig>,
-}
-
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-struct LegacyNotionConfig {
-    #[serde(rename = "enabled")]
-    _enabled: bool,
-    #[serde(rename = "database_id")]
-    _database_id: String,
 }
 
 #[derive(Deserialize)]
@@ -94,8 +83,8 @@ url = "https://example.com/feed.xml"
     }
 
     #[test]
-    fn accepts_legacy_notion_section() {
-        let config = toml::from_str::<Config>(
+    fn rejects_removed_notion_section() {
+        let result = toml::from_str::<Config>(
             r#"
 [settings]
 keywords = "claude"
@@ -108,10 +97,13 @@ database_id = "db_123"
 name = "Example"
 url = "https://example.com/feed.xml"
 "#,
-        )
-        .expect("legacy notion config should still parse");
+        );
 
-        assert_eq!(config.settings.keywords, "claude");
-        assert_eq!(config.feeds.len(), 1);
+        let error = match result {
+            Ok(_) => panic!("removed notion config should be rejected"),
+            Err(error) => error,
+        };
+
+        assert!(error.to_string().contains("unknown field `notion`"));
     }
 }
