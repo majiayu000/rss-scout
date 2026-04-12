@@ -69,8 +69,7 @@ static ARXIV_NEGATIVE: LazyLock<Regex> = LazyLock::new(|| {
     ))
 });
 
-static ARXIV_CATEGORY_RE: LazyLock<Regex> =
-    LazyLock::new(|| re(r"\b((?:cs|stat)\.\w{2})\b"));
+static ARXIV_CATEGORY_RE: LazyLock<Regex> = LazyLock::new(|| re(r"\b((?:cs|stat)\.\w{2})\b"));
 
 const ARXIV_ALLOWED_CATEGORIES: &[&str] = &[
     "cs.AI", "cs.CL", "cs.SE", "cs.LG", "cs.IR", "cs.MA", "cs.HC", "cs.CR", "cs.PL", "cs.FL",

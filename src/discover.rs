@@ -189,11 +189,15 @@ fn extract_urls_from_reports(data_dir: &Path, days: usize) -> Result<Vec<String>
 }
 
 fn extract_domain(url: &str) -> Option<String> {
-    Url::parse(url).ok().and_then(|u| u.host_str().map(|h| h.to_lowercase()))
+    Url::parse(url)
+        .ok()
+        .and_then(|u| u.host_str().map(|h| h.to_lowercase()))
 }
 
 fn is_skip_domain(domain: &str) -> bool {
-    SKIP_DOMAINS.iter().any(|skip| domain == *skip || domain.ends_with(&format!(".{skip}")))
+    SKIP_DOMAINS
+        .iter()
+        .any(|skip| domain == *skip || domain.ends_with(&format!(".{skip}")))
 }
 
 /// Try HTML <link rel="alternate"> autodiscovery (order-independent attribute matching)
@@ -326,10 +330,7 @@ mod tests {
         let tag4 = r#"<link REL="alternate" TYPE="application/rss+xml" HREF="/rss">"#;
 
         for tag in [tag1, tag2, tag3, tag4] {
-            assert!(
-                LINK_TAG_RE.is_match(tag),
-                "LINK_TAG_RE should match: {tag}"
-            );
+            assert!(LINK_TAG_RE.is_match(tag), "LINK_TAG_RE should match: {tag}");
             let tag_match = LINK_TAG_RE.find(tag).unwrap().as_str();
             assert!(
                 REL_ALTERNATE_RE.is_match(tag_match),
@@ -339,15 +340,12 @@ mod tests {
                 TYPE_FEED_RE.is_match(tag_match),
                 "TYPE_FEED_RE should match: {tag}"
             );
-            assert!(
-                HREF_RE.is_match(tag_match),
-                "HREF_RE should match: {tag}"
-            );
+            assert!(HREF_RE.is_match(tag_match), "HREF_RE should match: {tag}");
         }
 
         // Non-feed link should NOT match type
         let non_feed = r#"<link rel="stylesheet" type="text/css" href="/style.css">"#;
         let tag_match = LINK_TAG_RE.find(non_feed).unwrap().as_str();
-        assert!(REL_ALTERNATE_RE.is_match(tag_match) == false);
+        assert!(!REL_ALTERNATE_RE.is_match(tag_match));
     }
 }

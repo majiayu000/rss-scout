@@ -41,16 +41,19 @@ impl Report {
         }
         writeln!(self.file, "## 今日亮点")?;
         for (i, se) in entries.iter().enumerate() {
-            writeln!(self.file, "{}. [{}] {}", i + 1, se.feed_name, se.entry.title)?;
+            writeln!(
+                self.file,
+                "{}. [{}] {}",
+                i + 1,
+                se.feed_name,
+                se.entry.title
+            )?;
         }
         writeln!(self.file)?;
         Ok(())
     }
 
-    pub fn write_priority_sections(
-        &mut self,
-        all: &[ScoredEntry],
-    ) -> Result<(), Box<dyn Error>> {
+    pub fn write_priority_sections(&mut self, all: &[ScoredEntry]) -> Result<(), Box<dyn Error>> {
         for &prio in &[Priority::P0, Priority::P1, Priority::P2] {
             let items: Vec<&ScoredEntry> = all.iter().filter(|e| e.priority == prio).collect();
             if items.is_empty() {
@@ -109,10 +112,7 @@ impl Report {
         Ok(())
     }
 
-    pub fn write_changelog_compact(
-        &mut self,
-        all: &[ScoredEntry],
-    ) -> Result<(), Box<dyn Error>> {
+    pub fn write_changelog_compact(&mut self, all: &[ScoredEntry]) -> Result<(), Box<dyn Error>> {
         let changelogs: BTreeMap<&str, Vec<&ScoredEntry>> = all
             .iter()
             .filter(|e| e.feed_kind.as_deref() == Some("changelog"))
@@ -130,8 +130,14 @@ impl Report {
             if items.len() == 1 {
                 writeln!(self.file, "- **{name}**: {}", items[0].entry.title)?;
             } else {
-                let first = &items.last().map(|e| &e.entry.title).unwrap_or(&items[0].entry.title);
-                let last = &items.first().map(|e| &e.entry.title).unwrap_or(&items[0].entry.title);
+                let first = &items
+                    .last()
+                    .map(|e| &e.entry.title)
+                    .unwrap_or(&items[0].entry.title);
+                let last = &items
+                    .first()
+                    .map(|e| &e.entry.title)
+                    .unwrap_or(&items[0].entry.title);
                 writeln!(
                     self.file,
                     "- **{name}**: {first}~{last} ({} releases)",
