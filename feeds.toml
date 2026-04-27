@@ -446,7 +446,7 @@ kind = "blog"
 
 [[feeds]]
 name = "LangChain"
-url = "https://blog.langchain.com/rss"
+url = "https://blog.langchain.com/rss.xml"
 tier = "official"
 kind = "blog"
 
@@ -737,7 +737,7 @@ kind = "news"
 # MLOps / Infra (3)
 [[feeds]]
 name = "MLOps"
-url = "https://mlops.community/feed/"
+url = "https://mlopscommunity.substack.com/feed"
 tier = "aggregator"
 kind = "blog"
 
@@ -798,10 +798,10 @@ url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_xain
 tier = "official"
 kind = "blog"
 
-# Cursor 版本追踪 (1)
+# Cursor 版本追踪 — 2026-04-25 替换：cursor-changelog.com 死链 → 官方 cursor.com/changelog
 [[feeds]]
-name = "CursorVersions"
-url = "https://api.cursor-changelog.com/api/versions/rss"
+name = "Cursor"
+url = "https://cursor.com/changelog/rss.xml"
 skip_filter = true
 tier = "release"
 kind = "changelog"
@@ -896,7 +896,7 @@ kind = "podcast"
 # 新增 P0+P1 源 (Phase 2)
 [[feeds]]
 name = "AppleML"
-url = "https://machinelearning.apple.com/feed.xml"
+url = "https://machinelearning.apple.com/rss.xml"
 tier = "official"
 kind = "blog"
 
@@ -942,11 +942,7 @@ url = "https://cursor.com/atom.xml"
 tier = "official"
 kind = "blog"
 
-[[feeds]]
-name = "CursorChangelog"
-url = "https://cursor-changelog.com/feed"
-tier = "release"
-kind = "changelog"
+# CursorChangelog 已删除 — 2026-04-25 替换合并到上面的 "Cursor" 单条（cursor.com/changelog/rss.xml）
 
 [[feeds]]
 name = "ConfidentAI"
@@ -977,4 +973,309 @@ name = "Slashdot"
 url = "https://rss.slashdot.org/Slashdot/slashdotMain"
 tier = "aggregator"
 kind = "news"
+
+# Added 2026-04-27: AI daily/community sources
+[[feeds]]
+name = "TLDR:AI"
+url = "https://tldr.tech/api/rss/ai"
+tier = "core"
+kind = "newsletter"
+
+[[feeds]]
+name = "Reddit:LocalLLaMA"
+url = "https://www.reddit.com/r/LocalLLaMA/.rss"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "QbitAI"
+url = "https://www.qbitai.com/feed"
+tier = "core"
+kind = "news"
+
+[[feeds]]
+name = "AITidbits"
+url = "https://aitidbits.substack.com/feed"
+tier = "core"
+kind = "newsletter"
+
+[[feeds]]
+name = "AlgorithmicBridge"
+url = "https://www.thealgorithmicbridge.com/feed"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "Leiphone"
+url = "https://www.leiphone.com/feed"
+tier = "aggregator"
+kind = "news"
+
+[[feeds]]
+name = "Synced"
+url = "https://syncedreview.com/feed/"
+tier = "aggregator"
+kind = "news"
+
+# === Multi-AI Research 2026-04-27: 41 verified-200 sources ===
+# 详见 docs/artifacts/multi-ai-research-rss-feed-discovery-20260427-184956.md
+
+# Tier 1: Strong consensus (5)
+[[feeds]]
+name = "HamelHusain"
+url = "https://hamel.dev/index.xml"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "GH:openhands"
+url = "https://github.com/All-Hands-AI/OpenHands/releases.atom"
+tier = "aggregator"
+kind = "releases"
+
+[[feeds]]
+name = "HuggingFaceBlog"
+url = "https://huggingface.co/blog/feed.xml"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "Reddit:MachineLearning"
+url = "https://www.reddit.com/r/MachineLearning/.rss"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "PreferredNetworksEN"
+url = "https://tech.preferred.jp/en/feed/"
+tier = "core"
+kind = "blog"
+
+# Tier 2: Individual researchers / analysis blogs (8)
+[[feeds]]
+name = "JasonWei"
+url = "https://www.jasonwei.net/blog?format=rss"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "YoavArtzi"
+url = "https://www.yoavartzi.com/feed.xml"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "SashaRush"
+url = "https://srush.github.io/feed.xml"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "AndriyBurkov"
+url = "https://www.thelmbook.com/feed"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "HoraceHe"
+url = "https://www.thonking.ai/feed"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "NeelNanda"
+url = "https://www.neelnanda.io/blog?format=rss"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "FinbarrTimbers"
+url = "https://www.artfintel.com/feed"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "LessWrong:Curated"
+url = "https://www.lesswrong.com/feed.xml?view=curated"
+tier = "core"
+kind = "blog"
+
+# Tier 2: Practitioner newsletter / podcast (2)
+[[feeds]]
+name = "CognitiveRevolution"
+url = "https://feeds.megaphone.fm/cognitiverevolution"
+tier = "core"
+kind = "podcast"
+
+[[feeds]]
+name = "BigTechnology"
+url = "https://www.bigtechnology.com/feed"
+tier = "core"
+kind = "newsletter"
+
+# Tier 2: Reddit communities (3)
+[[feeds]]
+name = "Reddit:OpenAI"
+url = "https://www.reddit.com/r/OpenAI/.rss"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "Reddit:AI_Agents"
+url = "https://www.reddit.com/r/AI_Agents/.rss"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "Reddit:ArtificialInteligence"
+url = "https://www.reddit.com/r/ArtificialInteligence/.rss"
+tier = "aggregator"
+kind = "community"
+
+# Tier 2: GitHub releases for agent frameworks (7)
+[[feeds]]
+name = "GH:goose"
+url = "https://github.com/block/goose/releases.atom"
+tier = "aggregator"
+kind = "releases"
+
+[[feeds]]
+name = "GH:opencode"
+url = "https://github.com/sst/opencode/releases.atom"
+tier = "aggregator"
+kind = "releases"
+
+[[feeds]]
+name = "GH:librechat"
+url = "https://github.com/danny-avila/LibreChat/releases.atom"
+tier = "aggregator"
+kind = "releases"
+
+[[feeds]]
+name = "GH:semantic-kernel"
+url = "https://github.com/microsoft/semantic-kernel/releases.atom"
+tier = "aggregator"
+kind = "releases"
+
+[[feeds]]
+name = "GH:mem0"
+url = "https://github.com/mem0ai/mem0/releases.atom"
+tier = "aggregator"
+kind = "releases"
+
+[[feeds]]
+name = "GH:tooljet"
+url = "https://github.com/ToolJet/ToolJet/releases.atom"
+tier = "aggregator"
+kind = "releases"
+
+[[feeds]]
+name = "GH:autogpt"
+url = "https://github.com/Significant-Gravitas/AutoGPT/releases.atom"
+tier = "aggregator"
+kind = "releases"
+
+# Tier 2: Asia-Pacific (9)
+[[feeds]]
+name = "PreferredNetworksJA"
+url = "https://tech.preferred.jp/ja/feed/"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "SakanaAI"
+url = "https://sakana.ai/feed.xml"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "ABEJATech"
+url = "https://tech-blog.abeja.asia/feed"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "AIShift"
+url = "https://www.ai-shift.co.jp/techblog/feed"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "CyberAgentDev"
+url = "https://developers.cyberagent.co.jp/blog/feed/"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "LYCorporation"
+url = "https://engineering.linecorp.com/ja/feed/index.html"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "NaverD2"
+url = "https://d2.naver.com/d2.atom"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "KakaoTech"
+url = "https://tech.kakao.com/feed/"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "AISingapore"
+url = "https://aisingapore.org/feed/"
+tier = "aggregator"
+kind = "blog"
+
+# Tier 3: External AI verified (7)
+[[feeds]]
+name = "VickiBoykis"
+url = "https://vickiboykis.com/index.xml"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "CharlesFrye"
+url = "https://charlesfrye.github.io/feed.xml"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "PacoNathan"
+url = "https://medium.com/feed/@pacoid"
+tier = "aggregator"
+kind = "blog"
+
+[[feeds]]
+name = "GaryMarcus"
+url = "https://garymarcus.substack.com/feed"
+tier = "core"
+kind = "blog"
+
+[[feeds]]
+name = "DagsHub"
+url = "https://dagshub.com/blog/feed"
+tier = "aggregator"
+kind = "blog"
+
+[[feeds]]
+name = "RexColeman"
+url = "https://rexcoleman.dev/index.xml"
+tier = "aggregator"
+kind = "blog"
+
+[[feeds]]
+name = "DSAISection"
+url = "https://rssdsaisection.substack.com/feed"
+tier = "aggregator"
+kind = "newsletter"
+
+# Notion 同步配置
+# API key 从环境变量 NOTION_API_KEY 读取
+[notion]
+enabled = true
+database_id = "3310837e-a8a7-81d3-a2f1-d1024745f68a"
 
