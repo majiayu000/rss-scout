@@ -50,8 +50,8 @@ pub fn parse(data: &[u8], max_items: usize) -> Vec<Entry> {
             let raw_desc = e.summary.map(|s| s.content).unwrap_or_default();
 
             // Extract image: priority media thumbnail > desc <img> tag
-            let image = extract_media_thumbnail(&e.media)
-                .or_else(|| extract_img_from_html(&raw_desc));
+            let image =
+                extract_media_thumbnail(&e.media).or_else(|| extract_img_from_html(&raw_desc));
 
             let desc: String = raw_desc.chars().take(200).collect();
 

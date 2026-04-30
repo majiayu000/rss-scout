@@ -260,10 +260,6 @@ fn run(
             continue;
         }
 
-        for entry in &new_entries {
-            seen.mark_seen(&entry.link);
-        }
-
         // Build a temporary Feed-like struct for scoring
         let feed_ref = config::Feed {
             name: result.name.clone(),
@@ -280,6 +276,10 @@ fn run(
                 &cfg.settings.scoring,
                 &seen,
             ));
+        }
+
+        for entry in &new_entries {
+            seen.mark_seen(&entry.link);
         }
     }
 
@@ -535,7 +535,10 @@ fn run_import(
     }
 
     if dry_run {
-        println!("--- dry-run: 以下内容将追加到 {} ---\n", feeds_path.display());
+        println!(
+            "--- dry-run: 以下内容将追加到 {} ---\n",
+            feeds_path.display()
+        );
         println!("{snippet}");
         println!("共 {} 个有效 feed", valid.len());
     } else {

@@ -6,8 +6,7 @@ const MAX_RETRIES: u32 = 3;
 const INITIAL_BACKOFF_MS: u64 = 500;
 
 /// Real browser User-Agent to avoid 403 from sites that block bot UA strings.
-const BROWSER_UA: &str =
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 \
+const BROWSER_UA: &str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 \
      (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
 
 pub fn new_agent() -> Agent {
@@ -20,8 +19,7 @@ pub fn new_agent() -> Agent {
 }
 
 pub fn fetch(agent: &Agent, url: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-    let mut last_err: Box<dyn std::error::Error> =
-        "no attempts made".to_string().into();
+    let mut last_err: Box<dyn std::error::Error> = "no attempts made".to_string().into();
     for attempt in 0..MAX_RETRIES {
         if attempt > 0 {
             let backoff = INITIAL_BACKOFF_MS * 2u64.pow(attempt - 1);
