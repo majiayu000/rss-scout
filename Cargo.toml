@@ -3,6 +3,7 @@ name = "rss-scout"
 version = "0.1.0"
 edition = "2021"
 description = "Zero-API knowledge discovery for AI dev domain"
+license = "MIT"
 
 [dependencies]
 feed-rs = "2"
