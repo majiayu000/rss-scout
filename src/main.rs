@@ -12,6 +12,7 @@ use clap::{Parser, Subcommand};
 use rayon::prelude::*;
 use regex::Regex;
 use scorer::{Priority, ScoredEntry};
+use std::collections::HashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -153,6 +154,31 @@ struct FetchResult {
     entries: Vec<parser::Entry>,
 }
 
+fn collect_new_entries<'a>(
+    entries: &'a [parser::Entry],
+    seen: &dedup::SeenDb,
+    current_run_seen: &mut HashSet<String>,
+    pending_seen_links: &mut Vec<String>,
+) -> Vec<&'a parser::Entry> {
+    let mut new_entries = Vec::new();
+
+    for entry in entries {
+        if seen.is_seen(&entry.link) {
+            continue;
+        }
+
+        let normalized = dedup::normalize_url(&entry.link);
+        if !current_run_seen.insert(normalized) {
+            continue;
+        }
+
+        pending_seen_links.push(entry.link.clone());
+        new_entries.push(entry);
+    }
+
+    new_entries
+}
+
 fn run(
     dry_run: bool,
     feeds_path: &Path,
@@ -240,6 +266,8 @@ fn run(
     // Phase 2 (serial): dedup + score + report write
     let mut all_scored: Vec<ScoredEntry> = Vec::new();
     let mut total_count: usize = 0;
+    let mut current_run_seen: HashSet<String> = HashSet::new();
+    let mut pending_seen_links: Vec<String> = Vec::new();
 
     for result in &results {
         total_count += result.raw_count;
@@ -250,11 +278,12 @@ fn run(
             result.name
         );
 
-        let new_entries: Vec<&parser::Entry> = result
-            .entries
-            .iter()
-            .filter(|e| !seen.is_seen(&e.link))
-            .collect();
+        let new_entries = collect_new_entries(
+            &result.entries,
+            &seen,
+            &mut current_run_seen,
+            &mut pending_seen_links,
+        );
 
         if new_entries.is_empty() {
             continue;
@@ -277,10 +306,10 @@ fn run(
                 &seen,
             ));
         }
+    }
 
-        for entry in &new_entries {
-            seen.mark_seen(&entry.link);
-        }
+    for link in &pending_seen_links {
+        seen.mark_seen(link);
     }
 
     // Sort by score descending
@@ -311,6 +340,117 @@ fn run(
     println!("{}", report_path.display());
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+    use tempfile::NamedTempFile;
+
+    fn make_entry(link: &str) -> parser::Entry {
+        parser::Entry {
+            title: "Post".to_string(),
+            desc: String::new(),
+            link: link.to_string(),
+            date: String::new(),
+            image: None,
+        }
+    }
+
+    fn make_feed() -> config::Feed {
+        config::Feed {
+            name: "Blog".to_string(),
+            url: String::new(),
+            skip_filter: false,
+            tier: Some("aggregator".to_string()),
+            kind: None,
+        }
+    }
+
+    fn make_scoring() -> config::ScoringConfig {
+        config::ScoringConfig {
+            keywords_high: Vec::new(),
+            keywords_mid: Vec::new(),
+        }
+    }
+
+    fn seen_with_links(links: &[&str]) -> dedup::SeenDb {
+        let mut tmp = NamedTempFile::new().unwrap();
+        write!(tmp, "").unwrap();
+
+        let mut seen = dedup::SeenDb::load(tmp.path(), 90).unwrap();
+        for link in links {
+            seen.mark_seen(link);
+        }
+        seen
+    }
+
+    #[test]
+    fn current_run_links_do_not_affect_uniqueness_scoring() {
+        let mut seen = seen_with_links(&[
+            "https://example.com/history-1",
+            "https://example.com/history-2",
+        ]);
+        let first_feed_entries = vec![make_entry("https://example.com/new-1")];
+        let second_feed_entries = vec![make_entry("https://example.com/new-2")];
+        let feed = make_feed();
+        let scoring = make_scoring();
+        let mut current_run_seen = HashSet::new();
+        let mut pending_seen_links = Vec::new();
+
+        let first_new = collect_new_entries(
+            &first_feed_entries,
+            &seen,
+            &mut current_run_seen,
+            &mut pending_seen_links,
+        );
+        let first_scored = scorer::score_entry(first_new[0], &feed, &scoring, &seen);
+
+        let second_new = collect_new_entries(
+            &second_feed_entries,
+            &seen,
+            &mut current_run_seen,
+            &mut pending_seen_links,
+        );
+        let second_scored = scorer::score_entry(second_new[0], &feed, &scoring, &seen);
+
+        assert_eq!(first_scored.breakdown[3], 3);
+        assert_eq!(second_scored.breakdown[3], 3);
+        assert_eq!(seen.domain_count("example.com"), 2);
+        assert_eq!(pending_seen_links.len(), 2);
+
+        for link in &pending_seen_links {
+            seen.mark_seen(link);
+        }
+
+        assert_eq!(seen.domain_count("example.com"), 4);
+    }
+
+    #[test]
+    fn current_run_dedup_uses_normalized_urls_without_marking_seen() {
+        let seen = seen_with_links(&[]);
+        let entries = vec![
+            make_entry("http://example.com/post?utm_source=rss"),
+            make_entry("https://example.com/post"),
+        ];
+        let mut current_run_seen = HashSet::new();
+        let mut pending_seen_links = Vec::new();
+
+        let new_entries = collect_new_entries(
+            &entries,
+            &seen,
+            &mut current_run_seen,
+            &mut pending_seen_links,
+        );
+
+        assert_eq!(new_entries.len(), 1);
+        assert_eq!(
+            pending_seen_links,
+            vec!["http://example.com/post?utm_source=rss"]
+        );
+        assert_eq!(seen.len(), 0);
+    }
 }
 
 fn check(data_dir: &Path) {
