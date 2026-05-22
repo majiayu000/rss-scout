@@ -12,6 +12,7 @@ use clap::{Parser, Subcommand};
 use rayon::prelude::*;
 use regex::Regex;
 use scorer::{Priority, ScoredEntry};
+use serde::Serialize;
 use std::collections::HashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -451,6 +452,45 @@ mod tests {
         );
         assert_eq!(seen.len(), 0);
     }
+
+    #[test]
+    fn import_requires_existing_readable_config() {
+        let temp_dir = tempfile::tempdir().expect("tempdir");
+        let opml_path = temp_dir.path().join("feeds.opml");
+        let feeds_path = temp_dir.path().join("feeds.toml");
+        fs::write(
+            &opml_path,
+            r#"<opml><body><outline text="Example" xmlUrl="https://example.com/feed.xml"/></body></opml>"#,
+        )
+        .expect("write opml");
+
+        let error = run_import(&opml_path, true, &feeds_path).expect_err("missing config fails");
+
+        assert!(error.to_string().contains("无法读取"));
+        assert!(!feeds_path.exists());
+    }
+
+    #[test]
+    fn import_snippet_escapes_toml_strings() {
+        let feed = opml::OpmlFeed {
+            name: "Quote \"Feed\"".to_string(),
+            url: "https://example.com/a?x=\"y\"".to_string(),
+        };
+
+        let snippet = format_import_snippet(&[(&feed, 1)]).expect("snippet");
+        let parsed = toml::from_str::<config::Config>(&format!(
+            r#"
+[settings]
+keywords = "rust"
+
+{snippet}
+"#
+        ))
+        .expect("escaped snippet parses");
+
+        assert_eq!(parsed.feeds[0].name, feed.name);
+        assert_eq!(parsed.feeds[0].url, feed.url);
+    }
 }
 
 fn check(data_dir: &Path) {
@@ -597,17 +637,14 @@ fn run_import(
     }
     log(&format!("OPML 解析到 {} 个 feed", candidates.len()));
 
-    // Load existing feeds for domain dedup
-    let existing_domains: std::collections::HashSet<String> = if feeds_path.exists() {
-        let cfg = config::load(feeds_path)?;
-        cfg.feeds
-            .iter()
-            .filter_map(|f| url::Url::parse(&f.url).ok())
-            .filter_map(|u| u.host_str().map(|h| h.to_lowercase()))
-            .collect()
-    } else {
-        std::collections::HashSet::new()
-    };
+    // Import appends to the full config file, so validate it before fetch work.
+    let cfg = config::load(feeds_path)?;
+    let existing_domains: std::collections::HashSet<String> = cfg
+        .feeds
+        .iter()
+        .filter_map(|f| url::Url::parse(&f.url).ok())
+        .filter_map(|u| u.host_str().map(|h| h.to_lowercase()))
+        .collect();
 
     // Filter out already-known domains
     let new_candidates: Vec<&opml::OpmlFeed> = candidates
@@ -665,14 +702,7 @@ fn run_import(
         return Ok(());
     }
 
-    // Generate TOML snippet
-    let mut snippet = String::from("\n# OPML 导入\n");
-    for (feed, _count) in &valid {
-        snippet.push_str("[[feeds]]\n");
-        snippet.push_str(&format!("name = \"{}\"\n", feed.name));
-        snippet.push_str(&format!("url = \"{}\"\n", feed.url));
-        snippet.push('\n');
-    }
+    let snippet = format_import_snippet(&valid)?;
 
     if dry_run {
         println!(
@@ -682,7 +712,8 @@ fn run_import(
         println!("{snippet}");
         println!("共 {} 个有效 feed", valid.len());
     } else {
-        let mut existing = fs::read_to_string(feeds_path).unwrap_or_default();
+        let mut existing = fs::read_to_string(feeds_path)
+            .map_err(|e| format!("无法读取 {}: {e}", feeds_path.display()))?;
         if !existing.ends_with('\n') {
             existing.push('\n');
         }
@@ -696,4 +727,30 @@ fn run_import(
     }
 
     Ok(())
+}
+
+#[derive(Serialize)]
+struct ImportFeeds<'a> {
+    feeds: Vec<ImportFeed<'a>>,
+}
+
+#[derive(Serialize)]
+struct ImportFeed<'a> {
+    name: &'a str,
+    url: &'a str,
+}
+
+fn format_import_snippet(
+    valid: &[(&opml::OpmlFeed, usize)],
+) -> Result<String, Box<dyn std::error::Error>> {
+    let feeds = valid
+        .iter()
+        .map(|(feed, _count)| ImportFeed {
+            name: &feed.name,
+            url: &feed.url,
+        })
+        .collect();
+    let mut snippet = String::from("\n# OPML 导入\n");
+    snippet.push_str(&toml::to_string(&ImportFeeds { feeds })?);
+    Ok(snippet)
 }
