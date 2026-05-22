@@ -61,15 +61,24 @@ url = "2"
 ## 安装
 
 ```bash
-cd rss-scout && cargo install --path .
+cd rss-scout
+./install-launchd.sh
 # → ~/.cargo/bin/rss-scout
+# → ~/Library/LaunchAgents/com.user.rss-scout.plist
 ```
 
 ## launchd 简化
 
+`com.user.rss-scout.plist` 是模板，不要直接安装。`install-launchd.sh`
+会执行 `cargo install --path .`，按当前用户生成实际 plist，并显式传入 checked-in `feeds.toml`：
+
 ```xml
-<string>~/.cargo/bin/rss-scout</string>
+<string>/Users/<user>/.cargo/bin/rss-scout</string>
 <string>run</string>
+<string>--feeds</string>
+<string>/path/to/rss-scout/feeds.toml</string>
+<string>--data-dir</string>
+<string>/Users/<user>/.rss-scout</string>
 ```
 
 不再需要 workaround 脚本。

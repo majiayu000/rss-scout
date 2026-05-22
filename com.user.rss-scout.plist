@@ -2,13 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+<!-- Template only. Run ./install-launchd.sh to generate a current-user plist. -->
 <dict>
   <key>Label</key>
   <string>com.user.rss-scout</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/Users/lifcc/.cargo/bin/rss-scout</string>
+    <string>__RSS_SCOUT_BIN__</string>
     <string>run</string>
+    <string>--feeds</string>
+    <string>__RSS_SCOUT_FEEDS__</string>
+    <string>--data-dir</string>
+    <string>__RSS_SCOUT_DATA_DIR__</string>
   </array>
   <key>StartCalendarInterval</key>
   <array>
@@ -20,8 +25,8 @@
     </dict>
   </array>
   <key>StandardOutPath</key>
-  <string>/Users/lifcc/.rss-scout/scout.log</string>
+  <string>__RSS_SCOUT_LOG__</string>
   <key>StandardErrorPath</key>
-  <string>/Users/lifcc/.rss-scout/scout.log</string>
+  <string>__RSS_SCOUT_LOG__</string>
 </dict>
 </plist>
