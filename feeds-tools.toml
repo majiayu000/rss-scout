@@ -1,0 +1,469 @@
+# Tool Scout Feeds — 专门发现适合 Claude Code / Codex 用户的工具/skill/库
+# 创建 2026-05-08，独立于 knowledge-scout 的 feeds.toml（思考型内容源）
+# 全部 URL 已用 Mozilla UA 实测可达（除 Show HN: cli 因超时被排除）
+
+[settings]
+max_items = 30
+seen_expire_days = 90
+
+# ============================================================
+# A. Awesome-X commits（最高 ROI — 维护者每加一条新工具就触发）
+# ============================================================
+
+[[feeds]]
+name = "Awesome:mcp-servers"
+url = "https://github.com/punkpeye/awesome-mcp-servers/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+[[feeds]]
+name = "Awesome:mcp-official"
+url = "https://github.com/modelcontextprotocol/servers/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+[[feeds]]
+name = "Awesome:claude-code"
+url = "https://github.com/hesreallyhim/awesome-claude-code/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+[[feeds]]
+name = "Awesome:cursorrules"
+url = "https://github.com/PatrickJS/awesome-cursorrules/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+[[feeds]]
+name = "Awesome:ai-agents"
+url = "https://github.com/e2b-dev/awesome-ai-agents/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+[[feeds]]
+name = "Awesome:llm-apps"
+url = "https://github.com/Shubhamsaboo/awesome-llm-apps/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+[[feeds]]
+name = "Awesome:cli-apps"
+url = "https://github.com/agarrharr/awesome-cli-apps/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+[[feeds]]
+name = "Awesome:tauri"
+url = "https://github.com/tauri-apps/awesome-tauri/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+# ============================================================
+# B. GH Trend daily（每日新工具池）
+# ============================================================
+
+[[feeds]]
+name = "GH-Trend:daily-rust"
+url = "https://mshibanami.github.io/GitHubTrendingRSS/daily/rust.xml"
+tier = "core"
+kind = "trending"
+
+[[feeds]]
+name = "GH-Trend:daily-typescript"
+url = "https://mshibanami.github.io/GitHubTrendingRSS/daily/typescript.xml"
+tier = "core"
+kind = "trending"
+
+[[feeds]]
+name = "GH-Trend:daily-python"
+url = "https://mshibanami.github.io/GitHubTrendingRSS/daily/python.xml"
+tier = "core"
+kind = "trending"
+
+[[feeds]]
+name = "GH-Trend:daily-go"
+url = "https://mshibanami.github.io/GitHubTrendingRSS/daily/go.xml"
+tier = "core"
+kind = "trending"
+
+# ============================================================
+# C. Show HN keywords（新工具发布主要渠道）
+# 注：cli / cli tool 关键词搜索经常超时，未加入；可后续测稳定性再补
+# ============================================================
+
+[[feeds]]
+name = "ShowHN:mcp"
+url = "https://hnrss.org/show?q=mcp&count=20"
+tier = "aggregator"
+kind = "show-hn"
+
+[[feeds]]
+name = "ShowHN:claude-code"
+url = "https://hnrss.org/show?q=claude+code&count=20"
+tier = "aggregator"
+kind = "show-hn"
+
+[[feeds]]
+name = "ShowHN:cursor"
+url = "https://hnrss.org/show?q=cursor&count=20"
+tier = "aggregator"
+kind = "show-hn"
+
+[[feeds]]
+name = "ShowHN:ai-agent"
+url = "https://hnrss.org/show?q=ai+agent&count=20"
+tier = "aggregator"
+kind = "show-hn"
+
+[[feeds]]
+name = "ShowHN:devtools"
+url = "https://hnrss.org/show?q=devtools&count=20"
+tier = "aggregator"
+kind = "show-hn"
+
+[[feeds]]
+name = "ShowHN:browser-automation"
+url = "https://hnrss.org/show?q=browser+automation&count=20"
+tier = "aggregator"
+kind = "show-hn"
+
+# ============================================================
+# D. Newsletter / Curator（人工筛选过的工具池）
+# ============================================================
+
+[[feeds]]
+name = "Console.dev"
+url = "https://console.substack.com/feed"
+tier = "core"
+kind = "newsletter"
+
+[[feeds]]
+name = "BensBites"
+url = "https://www.bensbites.com/feed"
+tier = "core"
+kind = "newsletter"
+
+# ============================================================
+# E. 官博 / Changelog（产品发布瞬间）
+# ============================================================
+
+[[feeds]]
+name = "AnthropicNews"
+url = "https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml"
+tier = "core"
+kind = "vendor"
+
+[[feeds]]
+name = "AnthropicEng"
+url = "https://raw.githubusercontent.com/conoro/anthropic-engineering-rss-feed/main/anthropic_engineering_rss.xml"
+tier = "core"
+kind = "vendor"
+
+[[feeds]]
+name = "OpenAI"
+url = "https://openai.com/blog/rss.xml"
+tier = "core"
+kind = "vendor"
+
+[[feeds]]
+name = "Cursor:changelog"
+url = "https://cursor.com/changelog/rss.xml"
+tier = "core"
+kind = "vendor"
+
+[[feeds]]
+name = "Cursor:blog"
+url = "https://cursor.com/atom.xml"
+tier = "core"
+kind = "vendor"
+
+[[feeds]]
+name = "Windsurf"
+url = "https://windsurf.com/feed.xml"
+tier = "core"
+kind = "vendor"
+
+[[feeds]]
+name = "Aider"
+url = "https://aider.chat/feed.xml"
+tier = "core"
+kind = "vendor"
+
+# Olshansk 维护的第三方 RSS 桥接（给没原生 RSS 的网站做镜像）
+[[feeds]]
+name = "Olshansk:Cursor"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_cursor.xml"
+tier = "core"
+kind = "vendor-mirror"
+
+[[feeds]]
+name = "Olshansk:Anthropic-News"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml"
+tier = "core"
+kind = "vendor-mirror"
+
+[[feeds]]
+name = "Olshansk:Windsurf-Blog"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_windsurf_blog.xml"
+tier = "core"
+kind = "vendor-mirror"
+
+[[feeds]]
+name = "Olshansk:Windsurf-CL"
+url = "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_windsurf_changelog.xml"
+tier = "core"
+kind = "vendor-mirror"
+
+# ============================================================
+# F. Reddit subs（社区发现新工具最快渠道）
+# ============================================================
+
+[[feeds]]
+name = "Reddit:AI_Agents"
+url = "https://www.reddit.com/r/AI_Agents/.rss"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "Reddit:LocalLLaMA"
+url = "https://www.reddit.com/r/LocalLLaMA/.rss"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "Reddit:ClaudeAI"
+url = "https://www.reddit.com/r/ClaudeAI/.rss"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "Reddit:cursor"
+url = "https://www.reddit.com/r/cursor/.rss"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "Reddit:mcp"
+url = "https://www.reddit.com/r/mcp/.rss"
+tier = "aggregator"
+kind = "community"
+
+# ============================================================
+# G. GH Releases（工具类 — 已实测的 18 个）
+# ============================================================
+
+[[feeds]]
+name = "GH:claude-code"
+url = "https://github.com/anthropics/claude-code/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:openai-codex"
+url = "https://github.com/openai/codex/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:zed"
+url = "https://github.com/zed-industries/zed/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:aider"
+url = "https://github.com/Aider-AI/aider/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:continue"
+url = "https://github.com/continuedev/continue/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:cline"
+url = "https://github.com/cline/cline/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:goose-block"
+url = "https://github.com/block/goose/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:goose-aaif"
+url = "https://github.com/aaif-goose/goose/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:baml"
+url = "https://github.com/BoundaryML/baml/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:mcp-servers"
+url = "https://github.com/modelcontextprotocol/servers/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:tensorzero"
+url = "https://github.com/tensorzero/tensorzero/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:agent-browser"
+url = "https://github.com/vercel-labs/agent-browser/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:open-agents"
+url = "https://github.com/vercel-labs/open-agents/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:deer-flow"
+url = "https://github.com/bytedance/deer-flow/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:rtk"
+url = "https://github.com/rtk-ai/rtk/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:opencode"
+url = "https://github.com/anomalyco/opencode/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:acpx"
+url = "https://github.com/openclaw/acpx/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:openfang"
+url = "https://github.com/RightNow-AI/openfang/releases.atom"
+tier = "core"
+kind = "release"
+
+# Agent workflow / security / observability / browser automation watchlist
+# Added 2026-06-17 after Tool Scout quality review. These are Tier 1 source
+# additions because they are installable tools with stable GitHub release feeds.
+
+[[feeds]]
+name = "GH:osv-scanner"
+url = "https://github.com/google/osv-scanner/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:hatchet"
+url = "https://github.com/hatchet-dev/hatchet/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:coder"
+url = "https://github.com/coder/coder/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:google-adk-go"
+url = "https://github.com/google/adk-go/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:phoenix"
+url = "https://github.com/Arize-ai/phoenix/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:langfuse"
+url = "https://github.com/langfuse/langfuse/releases.atom"
+tier = "core"
+kind = "release"
+
+[[feeds]]
+name = "GH:semgrep"
+url = "https://github.com/semgrep/semgrep/releases.atom"
+tier = "core"
+kind = "release"
+
+# ============================================================
+# H. ProductHunt（每日新产品 — 主 feed，子分类返 403）
+# ============================================================
+
+[[feeds]]
+name = "ProductHunt"
+url = "https://www.producthunt.com/feed"
+tier = "aggregator"
+kind = "marketplace"
+
+# ============================================================
+# I. multi-ai-research 2026-05-08 Tier 1 新增
+# Awesome list × 4（实测可达 + Phase 5.5 fact-check 全部 verified）
+# ============================================================
+
+[[feeds]]
+name = "Awesome:claude-skills-composio"
+url = "https://github.com/ComposioHQ/awesome-claude-skills/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+[[feeds]]
+name = "Awesome:claude-skills-travisvn"
+url = "https://github.com/travisvn/awesome-claude-skills/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+[[feeds]]
+name = "Awesome:mcp-appcypher"
+url = "https://github.com/appcypher/awesome-mcp-servers/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+[[feeds]]
+name = "Awesome:ai-coding-tools"
+url = "https://github.com/ai-for-developers/awesome-ai-coding-tools/commits.atom"
+tier = "core"
+kind = "awesome-list"
+
+# ============================================================
+# J. 全量 Show HN（无关键词过滤，由 GPT 粗筛兜底）
+# 替代 Internal A 论证的 5 关键词系统性遗漏
+# ============================================================
+
+[[feeds]]
+name = "ShowHN:all"
+url = "https://hnrss.org/show?count=50"
+tier = "aggregator"
+kind = "show-hn"
+
+# ============================================================
+# K. MCP Registry（官方 — JSON 接口，需 Step 1 JSON 分支处理）
+# 注：Smithery llms.txt 实测是 docs 目录而非 servers 列表（Gemini 误导），已撤；
+#    Smithery 真正 servers API 需 auth，公开匿名不可达
+# ============================================================
+
+[[feeds]]
+name = "MCP-Registry:official"
+url = "https://registry.modelcontextprotocol.io/v0/servers"
+tier = "core"
+kind = "registry-api"
