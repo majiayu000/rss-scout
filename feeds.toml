@@ -42,6 +42,10 @@ url = "https://hnrss.org/newest?q=context+engineering&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "context engineering"
+min_points = 5
 
 [[feeds]]
 name = "HN:spec-driven"
@@ -77,6 +81,10 @@ url = "https://hnrss.org/newest?q=copilot+agent&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "copilot agent"
+min_points = 5
 
 [[feeds]]
 name = "HN:llm-safety"
@@ -105,6 +113,10 @@ url = "https://hnrss.org/newest?q=anthropic&points=10&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "anthropic"
+min_points = 10
 
 [[feeds]]
 name = "HN:ai-agents"
@@ -406,24 +418,36 @@ name = "arXiv:cs.SE"
 url = "https://rss.arxiv.org/rss/cs.SE"
 tier = "aggregator"
 kind = "news"
+adapter = "arxiv_api"
+[feeds.adapter_params]
+category = "cs.SE"
 
 [[feeds]]
 name = "arXiv:cs.AI"
 url = "https://export.arxiv.org/rss/cs.AI"
 tier = "aggregator"
 kind = "news"
+adapter = "arxiv_api"
+[feeds.adapter_params]
+category = "cs.AI"
 
 [[feeds]]
 name = "arXiv:cs.CL"
 url = "https://export.arxiv.org/rss/cs.CL"
 tier = "aggregator"
 kind = "news"
+adapter = "arxiv_api"
+[feeds.adapter_params]
+category = "cs.CL"
 
 [[feeds]]
 name = "arXiv:cs.LG"
 url = "https://export.arxiv.org/rss/cs.LG"
 tier = "aggregator"
 kind = "news"
+adapter = "arxiv_api"
+[feeds.adapter_params]
+category = "cs.LG"
 
 # 行业官方 (17)
 [[feeds]]
@@ -1279,3 +1303,117 @@ kind = "newsletter"
 enabled = true
 database_id = "3310837e-a8a7-81d3-a2f1-d1024745f68a"
 
+[[feeds]]
+name = "Awesome:claude-code"
+url = "https://github.com/hesreallyhim/awesome-claude-code/commits/main.atom"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "Awesome:mcp-servers"
+url = "https://github.com/punkpeye/awesome-mcp-servers/commits/main.atom"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "Awesome:llm-apps"
+url = "https://github.com/Shubhamsaboo/awesome-llm-apps/commits/main.atom"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "Awesome:langchain"
+url = "https://github.com/kyrolabs/awesome-langchain/commits/main.atom"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "Awesome:ai-agents"
+url = "https://github.com/e2b-dev/awesome-ai-agents/commits/main.atom"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "Awesome:llm"
+url = "https://github.com/Hannibal046/Awesome-LLM/commits/main.atom"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "Awesome:claude-prompts"
+url = "https://github.com/langgptai/awesome-claude-prompts/commits/main.atom"
+tier = "aggregator"
+kind = "github"
+
+[[feeds]]
+name = "Awesome:generative-ai"
+url = "https://github.com/steven2358/awesome-generative-ai/commits/main.atom"
+tier = "aggregator"
+kind = "github"
+
+# GitHub Releases — 2026-05-09 扩充 (9)
+
+[[feeds]]
+name = "GH:skills"
+url = "https://github.com/anthropics/skills/releases.atom"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "GH:langgraph"
+url = "https://github.com/langchain-ai/langgraph/releases.atom"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "GH:mcp-servers"
+url = "https://github.com/modelcontextprotocol/servers/releases.atom"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "GH:langfuse"
+url = "https://github.com/langfuse/langfuse/releases.atom"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "GH:promptfoo"
+url = "https://github.com/promptfoo/promptfoo/releases.atom"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "GH:lobe-chat"
+url = "https://github.com/lobehub/lobehub/releases.atom"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "GH:devika"
+url = "https://github.com/stitionai/devika/releases.atom"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "GH:o1"
+url = "https://github.com/OpenInterpreter/01/releases.atom"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+[[feeds]]
+name = "GH:litellm"
+url = "https://github.com/BerriAI/litellm/releases.atom"
+skip_filter = true
+tier = "release"
+kind = "changelog"
+
+# === 2026-07-23 工作流E 拓宽源域：中文 AI 工程 (5) ===
