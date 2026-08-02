@@ -467,3 +467,40 @@ name = "MCP-Registry:official"
 url = "https://registry.modelcontextprotocol.io/v0/servers"
 tier = "core"
 kind = "registry-api"
+
+# ============================================================
+# L. 自建 RSSHub（loopback 127.0.0.1:5568，launchd com.lifcc.rsshub 托管）
+# 运维：~/Desktop/code/AI/tools/rsshub/（compose+wrapper+runbook）
+# 注：twitter/user 路由无 auth 时返回陈旧快照（实测最新 2025-11，会被过期
+#    过滤全杀），待小号 RSSHUB_TWITTER_AUTH_TOKEN 验证新鲜后再加 RSSHub:twitter-*
+# ============================================================
+
+[[feeds]]
+name = "RSSHub:hn-show"
+url = "http://127.0.0.1:5568/hackernews/show"
+tier = "aggregator"
+kind = "show-hn"
+
+[[feeds]]
+name = "RSSHub:juejin-ai-weekly"
+url = "http://127.0.0.1:5568/juejin/trending/ai/weekly"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "RSSHub:juejin-freebie-weekly"
+url = "http://127.0.0.1:5568/juejin/trending/freebie/weekly"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "RSSHub:telegram-jianjiaoPD"
+url = "http://127.0.0.1:5568/telegram/channel/jianjiaoPD"
+tier = "aggregator"
+kind = "community"
+
+[[feeds]]
+name = "RSSHub:telegram-xinyuanai"
+url = "http://127.0.0.1:5568/telegram/channel/xinyuanai"
+tier = "aggregator"
+kind = "community"
