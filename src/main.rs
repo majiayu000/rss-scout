@@ -3,6 +3,7 @@ mod dedup;
 mod discover;
 mod fetcher;
 mod filter;
+mod notion;
 mod opml;
 mod parser;
 mod report;
@@ -334,6 +335,7 @@ fn run(
 
     if !dry_run {
         seen.save(&seen_path)?;
+        maybe_sync_notion(&cfg, &all_scored)?;
     }
 
     log(&format!("完成: {new_count} 新 / {total_count} 总"));
@@ -491,6 +493,35 @@ keywords = "rust"
         assert_eq!(parsed.feeds[0].name, feed.name);
         assert_eq!(parsed.feeds[0].url, feed.url);
     }
+}
+
+fn maybe_sync_notion(
+    cfg: &config::Config,
+    all_scored: &[ScoredEntry],
+) -> Result<(), Box<dyn std::error::Error>> {
+    let Some(notion_cfg) = cfg.notion.as_ref() else {
+        return Ok(());
+    };
+    if !notion_cfg.enabled {
+        return Ok(());
+    }
+    if notion_cfg.database_id.trim().is_empty() {
+        return Err("Notion 已启用，但 database_id 为空".into());
+    }
+
+    let api_key = std::env::var("NOTION_API_KEY")
+        .map_err(|_| "Notion 已启用，但环境变量 NOTION_API_KEY 缺失")?;
+    if api_key.trim().is_empty() {
+        return Err("Notion 已启用，但环境变量 NOTION_API_KEY 为空".into());
+    }
+
+    let notion_client = notion::NotionClient::new(api_key, notion_cfg.database_id.clone());
+    let today = chrono::Local::now().date_naive();
+    match notion_client.sync_daily_summary(all_scored, today)? {
+        true => log("Notion: 已创建当日摘要页"),
+        false => log("Notion: 已跳过（无 P0/P1 或当日页面已存在）"),
+    }
+    Ok(())
 }
 
 fn check(data_dir: &Path) {

@@ -7,7 +7,18 @@ use std::path::Path;
 #[serde(deny_unknown_fields)]
 pub struct Config {
     pub settings: Settings,
+    #[serde(default)]
+    pub notion: Option<NotionConfig>,
     pub feeds: Vec<Feed>,
+}
+
+#[derive(Deserialize, Default)]
+#[serde(deny_unknown_fields)]
+pub struct NotionConfig {
+    #[serde(default)]
+    pub enabled: bool,
+    #[serde(default)]
+    pub database_id: String,
 }
 
 #[derive(Deserialize)]
@@ -62,7 +73,7 @@ pub fn load(path: &Path) -> Result<Config, Box<dyn Error>> {
 
 #[cfg(test)]
 mod tests {
-    use super::Config;
+    use super::*;
 
     #[test]
     fn parses_valid_config() {
@@ -79,12 +90,13 @@ url = "https://example.com/feed.xml"
         .expect("valid config should parse");
 
         assert_eq!(config.settings.keywords, "claude");
+        assert!(config.notion.is_none());
         assert_eq!(config.feeds.len(), 1);
     }
 
     #[test]
-    fn rejects_removed_notion_section() {
-        let result = toml::from_str::<Config>(
+    fn parses_enabled_notion_section() {
+        let config = toml::from_str::<Config>(
             r#"
 [settings]
 keywords = "claude"
@@ -97,13 +109,11 @@ database_id = "db_123"
 name = "Example"
 url = "https://example.com/feed.xml"
 "#,
-        );
+        )
+        .expect("notion config should parse");
 
-        let error = match result {
-            Ok(_) => panic!("removed notion config should be rejected"),
-            Err(error) => error,
-        };
-
-        assert!(error.to_string().contains("unknown field `notion`"));
+        let notion = config.notion.as_ref().unwrap();
+        assert!(notion.enabled);
+        assert_eq!(notion.database_id, "db_123");
     }
 }
