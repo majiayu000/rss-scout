@@ -14,6 +14,10 @@ url = "https://hnrss.org/newest?q=agentic+coding&points=5&count=30"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "agentic coding"
+min_points = 5
 
 [[feeds]]
 name = "HN:vibe-coding"
@@ -21,6 +25,10 @@ url = "https://hnrss.org/newest?q=vibe+coding&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "vibe coding"
+min_points = 5
 
 [[feeds]]
 name = "HN:AI-coding-agent"
@@ -28,6 +36,10 @@ url = "https://hnrss.org/newest?q=AI+coding+agent&points=10&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "AI coding agent"
+min_points = 10
 
 [[feeds]]
 name = "HN:claude-code"
@@ -35,6 +47,10 @@ url = "https://hnrss.org/newest?q=claude+code&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "claude code"
+min_points = 5
 
 [[feeds]]
 name = "HN:context-engineering"
@@ -42,6 +58,10 @@ url = "https://hnrss.org/newest?q=context+engineering&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "context engineering"
+min_points = 5
 
 [[feeds]]
 name = "HN:spec-driven"
@@ -49,6 +69,10 @@ url = "https://hnrss.org/newest?q=spec+driven+development&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "spec driven development"
+min_points = 5
 
 [[feeds]]
 name = "HN:harness-engineering"
@@ -56,6 +80,10 @@ url = "https://hnrss.org/newest?q=harness+engineering&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "harness engineering"
+min_points = 5
 
 [[feeds]]
 name = "HN:mcp-protocol"
@@ -63,6 +91,10 @@ url = "https://hnrss.org/newest?q=model+context+protocol&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "model context protocol"
+min_points = 5
 
 [[feeds]]
 name = "HN:cursor-ai"
@@ -70,6 +102,10 @@ url = "https://hnrss.org/newest?q=cursor+AI&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "cursor AI"
+min_points = 5
 
 [[feeds]]
 name = "HN:copilot-agent"
@@ -77,6 +113,10 @@ url = "https://hnrss.org/newest?q=copilot+agent&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "copilot agent"
+min_points = 5
 
 [[feeds]]
 name = "HN:llm-safety"
@@ -84,6 +124,10 @@ url = "https://hnrss.org/newest?q=llm+safety&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "llm safety"
+min_points = 5
 
 [[feeds]]
 name = "HN:devin"
@@ -91,6 +135,10 @@ url = "https://hnrss.org/newest?q=devin+cognition&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "devin cognition"
+min_points = 5
 
 [[feeds]]
 name = "HN:openai-codex"
@@ -98,6 +146,10 @@ url = "https://hnrss.org/newest?q=openai+codex&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "openai codex"
+min_points = 5
 
 [[feeds]]
 name = "HN:anthropic"
@@ -105,6 +157,10 @@ url = "https://hnrss.org/newest?q=anthropic&points=10&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "anthropic"
+min_points = 10
 
 [[feeds]]
 name = "HN:ai-agents"
@@ -112,6 +168,10 @@ url = "https://hnrss.org/newest?q=AI+agents&points=10&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "AI agents"
+min_points = 10
 
 [[feeds]]
 name = "HN:llm-eval"
@@ -119,6 +179,10 @@ url = "https://hnrss.org/newest?q=LLM+evaluation&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "LLM evaluation"
+min_points = 5
 
 [[feeds]]
 name = "HN:ai-safety"
@@ -126,6 +190,10 @@ url = "https://hnrss.org/newest?q=AI+safety&points=10&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "AI safety"
+min_points = 10
 
 [[feeds]]
 name = "HN:rag-retrieval"
@@ -133,6 +201,10 @@ url = "https://hnrss.org/newest?q=RAG+retrieval&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "RAG retrieval"
+min_points = 5
 
 [[feeds]]
 name = "HN:windsurf"
@@ -140,6 +212,10 @@ url = "https://hnrss.org/newest?q=windsurf+codeium&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "windsurf codeium"
+min_points = 5
 
 [[feeds]]
 name = "HN:augment-code"
@@ -147,6 +223,10 @@ url = "https://hnrss.org/newest?q=augment+code+AI&points=5&count=20"
 skip_filter = true
 tier = "aggregator"
 kind = "news"
+adapter = "hn_algolia"
+[feeds.adapter_params]
+query = "augment code AI"
+min_points = 5
 
 # 核心博客 (14)
 [[feeds]]
@@ -321,6 +401,7 @@ kind = "podcast"
 # AI 新闻聚合 (5)
 [[feeds]]
 name = "AINews"
+max_items = 100            # 2026-08-10：高速率源，实测 fresh 缺失 10~182 条/日（cap 30 时）
 url = "https://news.smol.ai/rss.xml"
 skip_filter = true
 tier = "aggregator"
@@ -403,31 +484,48 @@ kind = "blog"
 # 学术 (4)
 [[feeds]]
 name = "arXiv:cs.SE"
+max_items = 400            # 2026-08-10：周一窗口含周末积压 ~300-400 条，api 默认 200 会截断
 url = "https://rss.arxiv.org/rss/cs.SE"
 tier = "aggregator"
 kind = "news"
+adapter = "arxiv_api"
+[feeds.adapter_params]
+category = "cs.SE"
 
 [[feeds]]
 name = "arXiv:cs.AI"
+max_items = 400            # 2026-08-10：周一窗口含周末积压 ~300-400 条，api 默认 200 会截断
 url = "https://export.arxiv.org/rss/cs.AI"
 tier = "aggregator"
 kind = "news"
+adapter = "arxiv_api"
+[feeds.adapter_params]
+category = "cs.AI"
 
 [[feeds]]
 name = "arXiv:cs.CL"
+max_items = 400            # 2026-08-10：周一窗口含周末积压 ~300-400 条，api 默认 200 会截断
 url = "https://export.arxiv.org/rss/cs.CL"
 tier = "aggregator"
 kind = "news"
+adapter = "arxiv_api"
+[feeds.adapter_params]
+category = "cs.CL"
 
 [[feeds]]
 name = "arXiv:cs.LG"
+max_items = 400            # 2026-08-10：周一窗口含周末积压 ~300-400 条，api 默认 200 会截断
 url = "https://export.arxiv.org/rss/cs.LG"
 tier = "aggregator"
 kind = "news"
+adapter = "arxiv_api"
+[feeds.adapter_params]
+category = "cs.LG"
 
 # 行业官方 (17)
 [[feeds]]
 name = "OpenAI"
+max_items = 100            # 2026-08-10：高速率源，实测 fresh 缺失 10~182 条/日（cap 30 时）
 url = "https://openai.com/blog/rss.xml"
 tier = "official"
 kind = "blog"
@@ -446,12 +544,14 @@ kind = "blog"
 
 [[feeds]]
 name = "LangChain"
+max_items = 100            # 2026-08-10：高速率源，实测 fresh 缺失 10~182 条/日（cap 30 时）
 url = "https://blog.langchain.com/rss.xml"
 tier = "official"
 kind = "blog"
 
 [[feeds]]
 name = "HuggingFace"
+max_items = 100            # 2026-08-10：高速率源，实测 fresh 缺失 10~182 条/日（cap 30 时）
 url = "https://huggingface.co/blog/feed.xml"
 tier = "official"
 kind = "blog"
@@ -500,6 +600,7 @@ kind = "blog"
 
 [[feeds]]
 name = "NvidiaDev"
+max_items = 100            # 2026-08-10：高速率源，实测 fresh 缺失 10~182 条/日（cap 30 时）
 url = "https://developer.nvidia.com/blog/feed"
 tier = "official"
 kind = "blog"
@@ -512,6 +613,7 @@ kind = "blog"
 
 [[feeds]]
 name = "Vercel"
+max_items = 100            # 2026-08-10：高速率源，实测 fresh 缺失 10~182 条/日（cap 30 时）
 url = "https://vercel.com/atom"
 tier = "official"
 kind = "blog"
@@ -983,6 +1085,7 @@ kind = "newsletter"
 
 [[feeds]]
 name = "Reddit:LocalLLaMA"
+host_min_interval_seconds = 60  # 2026-08-10 实测：reddit 未认证 .rss 桶约 60s 恢复，10s 仍间歇 429
 url = "https://www.reddit.com/r/LocalLLaMA/.rss"
 tier = "aggregator"
 kind = "community"
@@ -1035,12 +1138,14 @@ kind = "releases"
 
 [[feeds]]
 name = "HuggingFaceBlog"
+max_items = 100            # 2026-08-10：高速率源，实测 fresh 缺失 10~182 条/日（cap 30 时）
 url = "https://huggingface.co/blog/feed.xml"
 tier = "core"
 kind = "blog"
 
 [[feeds]]
 name = "Reddit:MachineLearning"
+host_min_interval_seconds = 60  # 2026-08-10 实测：reddit 未认证 .rss 桶约 60s 恢复，10s 仍间歇 429
 url = "https://www.reddit.com/r/MachineLearning/.rss"
 tier = "aggregator"
 kind = "community"
@@ -1116,18 +1221,21 @@ kind = "newsletter"
 # Tier 2: Reddit communities (3)
 [[feeds]]
 name = "Reddit:OpenAI"
+host_min_interval_seconds = 60  # 2026-08-10 实测：reddit 未认证 .rss 桶约 60s 恢复，10s 仍间歇 429
 url = "https://www.reddit.com/r/OpenAI/.rss"
 tier = "aggregator"
 kind = "community"
 
 [[feeds]]
 name = "Reddit:AI_Agents"
+host_min_interval_seconds = 60  # 2026-08-10 实测：reddit 未认证 .rss 桶约 60s 恢复，10s 仍间歇 429
 url = "https://www.reddit.com/r/AI_Agents/.rss"
 tier = "aggregator"
 kind = "community"
 
 [[feeds]]
 name = "Reddit:ArtificialInteligence"
+host_min_interval_seconds = 60  # 2026-08-10 实测：reddit 未认证 .rss 桶约 60s 恢复，10s 仍间歇 429
 url = "https://www.reddit.com/r/ArtificialInteligence/.rss"
 tier = "aggregator"
 kind = "community"
@@ -1279,3 +1387,25 @@ kind = "newsletter"
 enabled = true
 database_id = "3310837e-a8a7-81d3-a2f1-d1024745f68a"
 
+# API 适配器族（2026-08-10 启用）：GitHub 新建仓库雷达 + OpenAlex 论文动量
+[[feeds]]
+name = "GitHub:new-agent-repos"
+url = "https://github.com/search?q=agentic+coding"
+adapter = "github_api"
+tier = "aggregator"
+kind = "news"
+[feeds.adapter_params]
+mode = "search"
+query = "agentic coding OR AI coding agent OR MCP server"
+window = "new"
+min_stars = 1
+
+[[feeds]]
+name = "OpenAlex:llm-agents"
+url = "https://api.openalex.org/works"
+adapter = "openalex"
+tier = "aggregator"
+kind = "paper"
+[feeds.adapter_params]
+search = "LLM agents tool use code generation"
+window_days = 7
