@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install current stable Rust
+        run: rustup toolchain install stable --profile minimal --component rustfmt,clippy
+
+      - name: Select stable Rust
+        run: rustup default stable
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --version 0.22.2 --locked
+
+      - name: Audit locked dependencies
+        run: cargo audit --deny warnings
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run Clippy
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings
+
+      - name: Run tests
+        run: cargo test --locked --all-targets --all-features
+
+      - name: Parse canonical feed configs
+        run: |
+          cargo run --locked --quiet -- feeds --feeds feeds.toml >/dev/null
+          cargo run --locked --quiet -- feeds --feeds feeds-tools.toml >/dev/null
+
+      - name: Check patch whitespace
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git diff --check "${{ github.event.pull_request.base.sha }}...HEAD"
+          elif [[ "${{ github.event_name }}" == "push" ]]; then
+            before="${{ github.event.before }}"
+            if [[ "$before" =~ ^0+$ ]]; then
+              empty_tree="$(git hash-object -t tree /dev/null)"
+              git diff --check "$empty_tree..${{ github.sha }}"
+            else
+              git diff --check "$before..${{ github.sha }}"
+            fi
+          else
+            git diff-tree --check --no-commit-id -r --root HEAD
+          fi
+
+      - name: Check shell syntax
+        run: |
+          while IFS= read -r script; do
+            bash -n "$script"
+          done < <(find . -type f -name '*.sh' -not -path './target/*' -print)
+
+      - name: Scan tracked public tree
+        run: |
+          ./scripts/check-public-tree.sh
+          bash tests/public-tree-scan.sh

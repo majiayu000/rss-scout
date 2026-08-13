@@ -108,7 +108,7 @@ pub fn discover(
     }
 
     let mut domains: Vec<(String, usize)> = domain_freq.into_iter().collect();
-    domains.sort_by(|a, b| b.1.cmp(&a.1));
+    domains.sort_by_key(|domain| std::cmp::Reverse(domain.1));
     domains.truncate(50);
 
     let agent = fetcher::new_agent();
