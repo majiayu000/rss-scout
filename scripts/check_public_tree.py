@@ -15,7 +15,14 @@ FLAGS = re.IGNORECASE | re.DOTALL
 IDENTIFIER = rb"(?:[0-9a-f]{32}|[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})"
 
 # Build sensitive literals in pieces so this scanner does not match its source.
-USER_HOME = re.compile(rb"/" + rb"Users" + rb"/(?!<user>/)[^/\x00\s]+/", FLAGS)
+USER_HOME = re.compile(
+    rb"(?:"
+    rb"/" + rb"Users" + rb"/(?!<user>/)[^/\x00\s]+/"
+    rb"|/" + rb"home" + rb"/(?!<user>/)[^/\x00\s]+/"
+    rb"|[a-z]:[\\/]" + rb"Users" + rb"[\\/](?!<user>[\\/])[^\\/\x00\r\n]+[\\/]"
+    rb")",
+    FLAGS,
+)
 PRIVATE_LABEL = re.compile(rb"com[.]" + rb"lifcc", FLAGS)
 PRIVATE_REPO = re.compile(
     rb"(?:~|/" + rb"Users" + rb"/[^/]+)/Desktop/code/AI/" + rb"tools/", FLAGS
@@ -33,8 +40,16 @@ NOTION_URL = re.compile(
     + rb"(?:[^0-9a-f]|$)",
     FLAGS,
 )
+NOTION_TOKEN = re.compile(
+    rb"notion[_-]?(?:api[_-]?)?(?:key|token)"
+    rb"[\s\"']*[:=][\s\"']*"
+    rb"(?:ntn|secret)_[a-z0-9_-]{16,}",
+    FLAGS,
+)
 LOOPBACK_FEED = re.compile(
-    rb"url\s*=\s*[\"']https?://(?:127[.]0[.]0[.]1|localhost)(?::[0-9]+)?/",
+    rb"url\s*=\s*[\"']https?://"
+    rb"(?:127[.]0[.]0[.]1|localhost|\[::1\])"
+    rb"(?::[0-9]+)?(?=[/\"'?#\s])",
     FLAGS,
 )
 
@@ -72,6 +87,7 @@ def main() -> int:
             ("machine-specific repository path", PRIVATE_REPO),
             ("real Notion database/data-source identifier", NOTION_FIELD),
             ("real Notion identifier in URL", NOTION_URL),
+            ("real Notion API credential", NOTION_TOKEN),
         ]
         if Path(relative).match("feeds*.toml"):
             checks.append(("loopback URL in canonical feed config", LOOPBACK_FEED))

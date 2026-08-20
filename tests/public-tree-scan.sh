@@ -59,6 +59,18 @@ git -C "$FIXTURE_ROOT" add private-path.bin
 expect_failure 'private user path in binary file' "$binary_home"
 git -C "$FIXTURE_ROOT" rm -q -f private-path.bin
 
+linux_home='/''home/linux-user/research'
+printf '%s\n' "$linux_home" > "$FIXTURE_ROOT/linux-private-path.txt"
+git -C "$FIXTURE_ROOT" add linux-private-path.txt
+expect_failure 'Linux private user path' "$linux_home"
+git -C "$FIXTURE_ROOT" rm -q -f linux-private-path.txt
+
+windows_home='C:'\\'Users\windows-user\research'
+printf '%s\n' "$windows_home" > "$FIXTURE_ROOT/windows-private-path.txt"
+git -C "$FIXTURE_ROOT" add windows-private-path.txt
+expect_failure 'Windows private user path' "$windows_home"
+git -C "$FIXTURE_ROOT" rm -q -f windows-private-path.txt
+
 symlink_target="$FIXTURE_ROOT/"'Us''ers/private-user/research'
 mkdir -p "$(dirname "$symlink_target")"
 printf '%s\n' 'safe fixture content' > "$symlink_target"
@@ -114,6 +126,24 @@ printf '%s\n' "$notion_url" > "$FIXTURE_ROOT/private-notion-url.txt"
 git -C "$FIXTURE_ROOT" add private-notion-url.txt
 expect_failure 'Notion URL identifier'
 git -C "$FIXTURE_ROOT" rm -q -f private-notion-url.txt
+
+notion_token='ntn_''1111111111111111111111111111111111111111111111'
+printf 'NOTION_API_KEY=%s\n' "$notion_token" > "$FIXTURE_ROOT/private-notion-token.env"
+git -C "$FIXTURE_ROOT" add private-notion-token.env
+expect_failure 'real Notion API credential' "$notion_token"
+git -C "$FIXTURE_ROOT" rm -q -f private-notion-token.env
+
+loopback_host='http://local''host'
+printf "url = '%s'\n" "$loopback_host" > "$FIXTURE_ROOT/feeds-loopback-host.toml"
+git -C "$FIXTURE_ROOT" add feeds-loopback-host.toml
+expect_failure 'loopback host without trailing slash' "$loopback_host"
+git -C "$FIXTURE_ROOT" rm -q -f feeds-loopback-host.toml
+
+loopback_ipv6='http://[''::1]:4567/feed'
+printf "url = '%s'\n" "$loopback_ipv6" > "$FIXTURE_ROOT/feeds-loopback-ipv6.toml"
+git -C "$FIXTURE_ROOT" add feeds-loopback-ipv6.toml
+expect_failure 'IPv6 loopback canonical feed' "$loopback_ipv6"
+git -C "$FIXTURE_ROOT" rm -q -f feeds-loopback-ipv6.toml
 
 loopback='http://127.0.0.''1:4567/feed'
 printf "url = '%s'\n" "$loopback" >> "$FIXTURE_ROOT/feeds.toml"
