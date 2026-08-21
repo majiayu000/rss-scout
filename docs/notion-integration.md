@@ -1,6 +1,10 @@
-# Notion 集成文档
+# Notion 集成设计草案（未实现）
 
-## 架构
+> 状态：仅作为未来设计参考。当前公开树中没有 Notion client、
+> durable delivery 状态机或对应的 CLI 配置支持；下文描述的是拟议行为，
+> 不是已发布能力。
+
+## 拟议架构
 
 采用 **Database + Daily Summary Page 混合方案**（方案 C）：
 
@@ -16,8 +20,12 @@
 ```toml
 [notion]
 enabled = true
-database_id = "3310837e-a8a7-81d3-a2f1-d1024745f68a"
+database_id = "<your-notion-database-id>"
 ```
+
+此片段仅描述未来集成方向。当前 `rss-scout` 配置解析器会拒绝
+`[notion]`，因此不要将此段复制到规范 `feeds.toml` 或
+`feeds-tools.toml`。Notion 持久投递尚未包含在当前 CLI 中。
 
 ### 环境变量
 
@@ -27,7 +35,7 @@ export NOTION_API_KEY="ntn_xxx"  # 写入 ~/.zshrc
 
 需要在 Notion 中创建 Integration 并授权到目标 Database。
 
-## 数据流
+## 拟议数据流
 
 ```
 RSS Scout run
@@ -38,7 +46,7 @@ RSS Scout run
   → 超过 100 blocks 时分批 PATCH 追加
 ```
 
-## 页面内容格式
+## 拟议页面内容格式
 
 与 `/knowledge-scout` skill 手动创建的格式一致：
 
@@ -94,7 +102,7 @@ Body:
 }
 ```
 
-## 去重
+## 拟议去重
 
 通过查询 Database 中是否已存在当天日期的页面：
 
@@ -103,9 +111,9 @@ POST /databases/{id}/query
 Body: {"filter": {"property": "Date", "date": {"equals": "YYYY-MM-DD"}}, "page_size": 1}
 ```
 
-已存在则跳过，返回 `Ok(false)`。
+未来实现可在已存在时跳过，并返回 `Ok(false)`。
 
-## 重试策略
+## 拟议重试策略
 
 - 429（Rate Limit）和 5xx 错误自动重试
 - 指数退避：500ms → 1s → 2s
@@ -122,10 +130,11 @@ Body: {"filter": {"property": "Date", "date": {"equals": "YYYY-MM-DD"}}, "page_s
 | 格式 | 完全一致 | 完全一致 |
 | 条目 | P0 + P1 | AI 筛选后的精选 |
 
-Rust 自动推送是基线保障（每天必有），skill 模式是高质量版本（需手动触发）。
+此表仅比较拟议的 Rust 自动推送与现有手动 skill 流程；
+当前 `rss-scout` 不会自动推送到 Notion。
 
-## 代码位置
+## 拟议代码位置
 
-- `src/notion.rs` — NotionClient + block 构建
-- `src/config.rs` — NotionConfig 结构体
-- `src/main.rs` — run() 函数末尾的 Notion sync 逻辑
+- `src/notion.rs` — 未来的 NotionClient + block 构建
+- `src/config.rs` — 未来的 NotionConfig 结构体
+- `src/main.rs` — 未来在 `run()` 末尾接入的 Notion sync 逻辑

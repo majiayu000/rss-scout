@@ -977,4 +977,3 @@ name = "Slashdot"
 url = "https://rss.slashdot.org/Slashdot/slashdotMain"
 tier = "aggregator"
 kind = "news"
-
