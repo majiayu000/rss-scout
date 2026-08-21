@@ -34,15 +34,20 @@ NOTION_FIELD = re.compile(
     FLAGS,
 )
 NOTION_URL = re.compile(
-    rb"https?://(?:[a-z0-9-]+[.])?(?:notion[.]so|notion[.]site)/"
-    rb"[^\s\"'<>]*"
+    rb"https?://(?:"
+    rb"(?:[a-z0-9-]+[.])?(?:notion[.]so|notion[.]site)/"
+    rb"|" + rb"api" + rb"[.]notion[.]com/v1/"
+    rb")[^\s\"'<>]*"
+    rb"(?<![0-9a-f])"
     + IDENTIFIER
     + rb"(?:[^0-9a-f]|$)",
     FLAGS,
 )
 NOTION_TOKEN = re.compile(
-    rb"notion[_-]?(?:api[_-]?)?(?:key|token)"
-    rb"[\s\"']*[:=][\s\"']*"
+    rb"(?:"
+    rb"notion[_-]?(?:api[_-]?)?(?:key|token)[\s\"']*[:=][\s\"']*"
+    rb"|(?:^|[^a-z0-9_-])" + rb"author" + rb"ization[\s\"']*:[\s\"']*" + rb"bear" + rb"er\s+"
+    rb")"
     rb"(?:ntn|secret)_[a-z0-9_-]{16,}",
     FLAGS,
 )

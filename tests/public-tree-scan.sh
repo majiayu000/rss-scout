@@ -127,11 +127,38 @@ git -C "$FIXTURE_ROOT" add private-notion-url.txt
 expect_failure 'Notion URL identifier'
 git -C "$FIXTURE_ROOT" rm -q -f private-notion-url.txt
 
+notion_api_url="https://api.notion.com/v1/databases/${compact_notion_id}"
+printf '%s\n' "$notion_api_url" > "$FIXTURE_ROOT/private-notion-api-url.txt"
+git -C "$FIXTURE_ROOT" add private-notion-api-url.txt
+expect_failure 'Notion API URL identifier' "$compact_notion_id"
+git -C "$FIXTURE_ROOT" rm -q -f private-notion-api-url.txt
+
+printf 'https://api.notion.com/v1/databases/%sa\n' "$compact_notion_id" > "$FIXTURE_ROOT/safe-long-hex-url.txt"
+git -C "$FIXTURE_ROOT" add safe-long-hex-url.txt
+"$SCANNER" --root "$FIXTURE_ROOT" >/dev/null
+git -C "$FIXTURE_ROOT" rm -q -f safe-long-hex-url.txt
+
 notion_token='ntn_''1111111111111111111111111111111111111111111111'
 printf 'NOTION_API_KEY=%s\n' "$notion_token" > "$FIXTURE_ROOT/private-notion-token.env"
 git -C "$FIXTURE_ROOT" add private-notion-token.env
 expect_failure 'real Notion API credential' "$notion_token"
 git -C "$FIXTURE_ROOT" rm -q -f private-notion-token.env
+
+printf 'Authori%s: Bear%s %s\n' 'zation' 'er' "$notion_token" > "$FIXTURE_ROOT/private-notion-bearer.txt"
+git -C "$FIXTURE_ROOT" add private-notion-bearer.txt
+expect_failure 'Notion bearer credential' "$notion_token"
+git -C "$FIXTURE_ROOT" rm -q -f private-notion-bearer.txt
+
+legacy_notion_token='secret_''2222222222222222222222222222222222222222222222'
+printf 'Authori%s: Bear%s %s\n' 'zation' 'er' "$legacy_notion_token" > "$FIXTURE_ROOT/private-legacy-notion-bearer.txt"
+git -C "$FIXTURE_ROOT" add private-legacy-notion-bearer.txt
+expect_failure 'legacy Notion bearer credential' "$legacy_notion_token"
+git -C "$FIXTURE_ROOT" rm -q -f private-legacy-notion-bearer.txt
+
+printf 'XAuthori%s: Bear%s %s\n' 'zation' 'er' "$legacy_notion_token" > "$FIXTURE_ROOT/safe-prefixed-authorization.txt"
+git -C "$FIXTURE_ROOT" add safe-prefixed-authorization.txt
+"$SCANNER" --root "$FIXTURE_ROOT" >/dev/null
+git -C "$FIXTURE_ROOT" rm -q -f safe-prefixed-authorization.txt
 
 loopback_host='http://local''host'
 printf "url = '%s'\n" "$loopback_host" > "$FIXTURE_ROOT/feeds-loopback-host.toml"
