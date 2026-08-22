@@ -1137,13 +1137,6 @@ tier = "aggregator"
 kind = "releases"
 
 [[feeds]]
-name = "HuggingFaceBlog"
-max_items = 100            # 2026-08-10：高速率源，实测 fresh 缺失 10~182 条/日（cap 30 时）
-url = "https://huggingface.co/blog/feed.xml"
-tier = "core"
-kind = "blog"
-
-[[feeds]]
 name = "Reddit:MachineLearning"
 host_min_interval_seconds = 60  # 2026-08-10 实测：reddit 未认证 .rss 桶约 60s 恢复，10s 仍间歇 429
 url = "https://www.reddit.com/r/MachineLearning/.rss"

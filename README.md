@@ -38,6 +38,8 @@ For macOS launchd scheduling, generate a user-specific LaunchAgent instead of in
 
 Use `./install-launchd.sh --help` for `--data-dir`, `--bin`, `--plist`, `--label`, `--load`, and dry-run options.
 
+> **Note (2026-08):** This repo's launchd pipeline has been retired from production — daily scheduling now runs via the external `knowledge-scout` runtime, which consumes this repo's `feeds.toml`. Do not install this LaunchAgent alongside it (it would cause double scheduling and double writes to the same seen store). The install script is kept for reference only.
+
 ## Quickstart
 
 ```bash
@@ -118,7 +120,7 @@ target/debug/rss-scout feeds --feeds feeds.toml | tail -n 1
 Output:
 
 ```text
-共 151 个源
+共 199 个源
 ```
 
 Real help proof from this checkout:
@@ -157,7 +159,7 @@ The checked-in `feeds.toml` is the source config used in examples.
 - `feeds` lists local config only. It does not validate remote feed health.
 - `--dry-run` prevents seen-link persistence, but it still creates the output directory and report file.
 - The current CLI does not implement `--version`; the source package version is in `Cargo.toml`.
-- The current Rust code rejects a `[notion]` section in `feeds.toml`; Notion sync is not a supported CLI feature in this version.
+- Optional `[notion]` section enables a daily summary sync to a Notion database (`NOTION_API_KEY` env var required); any failure fails the run explicitly. See `docs/notion-integration.md`.
 - Default feed discovery uses `$HOME/.rss-scout/feeds.toml`, so installed users should pass `--feeds` or copy the config there.
 
 ## Release And Package Status

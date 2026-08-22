@@ -3,3 +3,8 @@ __pycache__/
 *.pyc
 .env
 .env.*
+
+# local-only paths (2026-08-23)
+/.claude/
+/memory/
+feeds.toml.before-fix-*

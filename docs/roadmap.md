@@ -141,9 +141,9 @@ rss-scout import <file.opml> [--dry-run]
 ### 3.3 旧文件清理
 
 确认 Rust 版本稳定运行 1 周后：
-- 删除 rss-scout.sh, parse_feed.py, filter_entries.py, check-new-scout.sh
-- 删除 ~/.rss-scout/run.sh, ~/.rss-scout/scout-launcher.sh
-- 更新 README
+- [x] 删除 rss-scout.sh, parse_feed.py, filter_entries.py, check-new-scout.sh(2026-08-23 执行)
+- [x] 更新 README(Notion 支持、源数量、launchd 退役标注)
+- [x] 删除 ~/.rss-scout/run.sh, ~/.rss-scout/scout-launcher.sh(2026-08-23 执行;launchd/cron 均无引用,活跃 knowledge-scout 走独立 python launcher)
 
 ---
 
