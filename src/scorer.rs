@@ -166,6 +166,10 @@ mod tests {
             skip_filter: false,
             tier: tier.map(|s| s.to_string()),
             kind: kind.map(|s| s.to_string()),
+            adapter: None,
+            adapter_params: None,
+            max_items: None,
+            host_min_interval_seconds: None,
         }
     }
 
@@ -378,6 +382,10 @@ mod batch_tests {
             skip_filter: false,
             tier: Some("aggregator".to_string()),
             kind: None,
+            adapter: None,
+            adapter_params: None,
+            max_items: None,
+            host_min_interval_seconds: None,
         };
         let first = Entry {
             title: "Post 1".to_string(),

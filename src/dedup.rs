@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
 use std::io::{BufRead, BufReader};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use url::Url;
 
 const STRIP_PARAMS: &[&str] = &[
@@ -32,7 +32,16 @@ impl SeenDb {
         let mut expired = 0usize;
         let mut migrated = 0usize;
 
-        if let Ok(file) = fs::File::open(path) {
+        let opened = match fs::File::open(path) {
+            Ok(file) => Some(file),
+            // 首次运行尚无库文件,允许空库
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => None,
+            // 其余 IO 错误必须显式失败,不得当空库静默继续(否则 save 会覆写真实历史)
+            Err(e) => {
+                return Err(format!("读取去重库 {} 失败: {e}", path.display()).into());
+            }
+        };
+        if let Some(file) = opened {
             let reader = BufReader::new(file);
             for line in reader.lines() {
                 let line = line?;
@@ -122,7 +131,12 @@ impl SeenDb {
             content.push_str(ts);
             content.push('\n');
         }
-        fs::write(path, content)?;
+        // 临时文件 + rename 原子替换:写失败不会截断既有库
+        let mut tmp_os = path.as_os_str().to_os_string();
+        tmp_os.push(".tmp");
+        let tmp_path = PathBuf::from(tmp_os);
+        fs::write(&tmp_path, content)?;
+        fs::rename(&tmp_path, path)?;
         eprintln!("[dedup] 库大小 {} 条", self.entries.len());
         Ok(())
     }

@@ -4,15 +4,35 @@ use regex::Regex;
 use serde_json::{json, Value};
 use std::error::Error;
 use std::io::Read;
+use std::sync::LazyLock;
 use std::thread;
 use std::time::Duration;
 use ureq::Agent;
 
 const NOTION_VERSION: &str = "2022-06-28";
+
+/// Notion 同步结果——区分"无 P0/P1 内容"与"当日页面已存在"两种跳过语义(2026-08-23 审计 #7)
+pub enum SyncOutcome {
+    /// 已创建当日摘要页
+    Created,
+    /// 无 P0/P1 条目可同步
+    NoHighPriority,
+    /// 当日页面已存在,幂等跳过
+    PageExists,
+}
 const MAX_RETRIES: u32 = 3;
 const INITIAL_BACKOFF_MS: u64 = 500;
 const MAX_BLOCKS_PER_REQUEST: usize = 100;
 const MAX_DESC_CHARS: usize = 300;
+
+/// HTML 标签清洗正则,进程内只编译一次(与 report.rs 的 LazyLock 约定一致)
+static TAG_RE: LazyLock<Regex> = LazyLock::new(|| match Regex::new(r"<[^>]+>") {
+    Ok(r) => r,
+    Err(e) => {
+        eprintln!("[FATAL] TAG_RE regex compile failed: {e}");
+        std::process::exit(1);
+    }
+});
 
 pub struct NotionClient {
     agent: Agent,
@@ -38,25 +58,25 @@ impl NotionClient {
         &self,
         entries: &[ScoredEntry],
         today: NaiveDate,
-    ) -> Result<bool, Box<dyn Error>> {
+    ) -> Result<SyncOutcome, Box<dyn Error>> {
         let selected: Vec<&ScoredEntry> = entries
             .iter()
             .filter(|entry| matches!(entry.priority, Priority::P0 | Priority::P1))
             .collect();
 
         if selected.is_empty() {
-            return Ok(false);
+            return Ok(SyncOutcome::NoHighPriority);
         }
 
         if self.page_exists_for_date(today)? {
-            return Ok(false);
+            return Ok(SyncOutcome::PageExists);
         }
 
         let title = build_page_title(today);
         let cover_url = first_cover_url(&selected);
         let blocks = build_blocks(&selected);
         if blocks.is_empty() {
-            return Ok(false);
+            return Ok(SyncOutcome::NoHighPriority);
         }
 
         let mut batches = split_blocks(&blocks, MAX_BLOCKS_PER_REQUEST);
@@ -67,7 +87,7 @@ impl NotionClient {
             self.append_blocks(&page_id, &batch)?;
         }
 
-        Ok(true)
+        Ok(SyncOutcome::Created)
     }
 
     fn page_exists_for_date(&self, today: NaiveDate) -> Result<bool, Box<dyn Error>> {
@@ -224,11 +244,7 @@ fn build_blocks(entries: &[&ScoredEntry]) -> Vec<Value> {
 }
 
 fn clean_description(raw: &str) -> String {
-    let tag_re = Regex::new(r"<[^>]+>").unwrap_or_else(|e| {
-        eprintln!("[FATAL] Notion desc regex compile failed: {e}");
-        std::process::exit(1);
-    });
-    let cleaned = tag_re.replace_all(raw, " ");
+    let cleaned = TAG_RE.replace_all(raw, " ");
     let cleaned = cleaned
         .replace("&nbsp;", " ")
         .replace("&amp;", "&")

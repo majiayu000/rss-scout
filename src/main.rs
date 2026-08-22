@@ -200,6 +200,8 @@ fn run(
 
     // Phase 1 (parallel): fetch + parse + keyword filter
     log("开始并行采集...");
+    // 失败显式化:并行阶段收集每源失败记录,报告尾部显式列出(2026-08-23 审计主线)
+    let failures_mutex = std::sync::Mutex::new(Vec::<report::FetchFailure>::new());
     let mut results: Vec<FetchResult> = cfg
         .feeds
         .par_iter()
@@ -219,6 +221,14 @@ fn run(
                         chrono::Local::now().format("%H:%M:%S"),
                         feed.name
                     );
+                    failures_mutex
+                        .lock()
+                        .expect("failures_mutex poisoned")
+                        .push(report::FetchFailure {
+                            index,
+                            name: feed.name.clone(),
+                            reason: format!("下载失败: {e}"),
+                        });
                     return None;
                 }
             };
@@ -229,6 +239,14 @@ fn run(
                     chrono::Local::now().format("%H:%M:%S"),
                     feed.name
                 );
+                failures_mutex
+                    .lock()
+                    .expect("failures_mutex poisoned")
+                    .push(report::FetchFailure {
+                        index,
+                        name: feed.name.clone(),
+                        reason: "空响应".to_string(),
+                    });
                 return None;
             }
 
@@ -264,6 +282,28 @@ fn run(
 
     // Restore deterministic order by original index
     results.sort_by_key(|r| r.index);
+    failures_mutex
+        .lock()
+        .expect("failures_mutex poisoned")
+        .sort_by_key(|f| f.index);
+
+    // 守卫:全部源失败时不得生成空报告覆盖当日已有文件,显式失败(审计 #5)
+    if results.is_empty() && !cfg.feeds.is_empty() {
+        let locked = failures_mutex.lock().expect("failures_mutex poisoned");
+        let names: Vec<&str> = locked.iter().map(|f| f.name.as_str()).collect();
+        return Err(format!(
+            "全部 {} 个源采集失败，放弃生成报告(不覆盖当日已有文件)。失败源: {}",
+            cfg.feeds.len(),
+            names.join("、")
+        )
+        .into());
+    }
+
+    // 取出失败清单供报告小节与汇总日志使用
+    let failures = failures_mutex.into_inner().expect("failures_mutex poisoned");
+    if !failures.is_empty() {
+        log(&format!("⚠ 采集失败 {}/{} 源", failures.len(), cfg.feeds.len()));
+    }
 
     // Phase 2 (serial): dedup + score + report write
     let mut all_scored: Vec<ScoredEntry> = Vec::new();
@@ -298,6 +338,10 @@ fn run(
             skip_filter: result.skip_filter,
             tier: result.tier.clone(),
             kind: result.kind.clone(),
+            adapter: None,
+            adapter_params: None,
+            max_items: None,
+            host_min_interval_seconds: None,
         };
 
         for entry in &new_entries {
@@ -331,11 +375,14 @@ fn run(
     rpt.write_summary(&p0_items)?;
     rpt.write_priority_sections(&all_scored)?;
     rpt.write_changelog_compact(&all_scored)?;
+    rpt.write_failures(cfg.feeds.len(), &failures)?;
     rpt.write_footer(total_count, new_count, seen.len())?;
 
     if !dry_run {
-        seen.save(&seen_path)?;
+        // 先同步 Notion 再落盘 seen:Notion 失败时 seen 尚未写盘,重跑即可补发,
+        // 旧顺序下失败条目已被去重库挡住会永久漏发(2026-08-23 审计 #7)
         maybe_sync_notion(&cfg, &all_scored)?;
+        seen.save(&seen_path)?;
     }
 
     log(&format!("完成: {new_count} 新 / {total_count} 总"));
@@ -346,154 +393,7 @@ fn run(
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use std::io::Write;
-    use tempfile::NamedTempFile;
-
-    fn make_entry(link: &str) -> parser::Entry {
-        parser::Entry {
-            title: "Post".to_string(),
-            desc: String::new(),
-            link: link.to_string(),
-            date: String::new(),
-            image: None,
-        }
-    }
-
-    fn make_feed() -> config::Feed {
-        config::Feed {
-            name: "Blog".to_string(),
-            url: String::new(),
-            skip_filter: false,
-            tier: Some("aggregator".to_string()),
-            kind: None,
-        }
-    }
-
-    fn make_scoring() -> config::ScoringConfig {
-        config::ScoringConfig {
-            keywords_high: Vec::new(),
-            keywords_mid: Vec::new(),
-        }
-    }
-
-    fn seen_with_links(links: &[&str]) -> dedup::SeenDb {
-        let mut tmp = NamedTempFile::new().unwrap();
-        write!(tmp, "").unwrap();
-
-        let mut seen = dedup::SeenDb::load(tmp.path(), 90).unwrap();
-        for link in links {
-            seen.mark_seen(link);
-        }
-        seen
-    }
-
-    #[test]
-    fn current_run_links_do_not_affect_uniqueness_scoring() {
-        let mut seen = seen_with_links(&[
-            "https://example.com/history-1",
-            "https://example.com/history-2",
-        ]);
-        let first_feed_entries = vec![make_entry("https://example.com/new-1")];
-        let second_feed_entries = vec![make_entry("https://example.com/new-2")];
-        let feed = make_feed();
-        let scoring = make_scoring();
-        let mut current_run_seen = HashSet::new();
-        let mut pending_seen_links = Vec::new();
-
-        let first_new = collect_new_entries(
-            &first_feed_entries,
-            &seen,
-            &mut current_run_seen,
-            &mut pending_seen_links,
-        );
-        let first_scored = scorer::score_entry(first_new[0], &feed, &scoring, &seen);
-
-        let second_new = collect_new_entries(
-            &second_feed_entries,
-            &seen,
-            &mut current_run_seen,
-            &mut pending_seen_links,
-        );
-        let second_scored = scorer::score_entry(second_new[0], &feed, &scoring, &seen);
-
-        assert_eq!(first_scored.breakdown[3], 3);
-        assert_eq!(second_scored.breakdown[3], 3);
-        assert_eq!(seen.domain_count("example.com"), 2);
-        assert_eq!(pending_seen_links.len(), 2);
-
-        for link in &pending_seen_links {
-            seen.mark_seen(link);
-        }
-
-        assert_eq!(seen.domain_count("example.com"), 4);
-    }
-
-    #[test]
-    fn current_run_dedup_uses_normalized_urls_without_marking_seen() {
-        let seen = seen_with_links(&[]);
-        let entries = vec![
-            make_entry("http://example.com/post?utm_source=rss"),
-            make_entry("https://example.com/post"),
-        ];
-        let mut current_run_seen = HashSet::new();
-        let mut pending_seen_links = Vec::new();
-
-        let new_entries = collect_new_entries(
-            &entries,
-            &seen,
-            &mut current_run_seen,
-            &mut pending_seen_links,
-        );
-
-        assert_eq!(new_entries.len(), 1);
-        assert_eq!(
-            pending_seen_links,
-            vec!["http://example.com/post?utm_source=rss"]
-        );
-        assert_eq!(seen.len(), 0);
-    }
-
-    #[test]
-    fn import_requires_existing_readable_config() {
-        let temp_dir = tempfile::tempdir().expect("tempdir");
-        let opml_path = temp_dir.path().join("feeds.opml");
-        let feeds_path = temp_dir.path().join("feeds.toml");
-        fs::write(
-            &opml_path,
-            r#"<opml><body><outline text="Example" xmlUrl="https://example.com/feed.xml"/></body></opml>"#,
-        )
-        .expect("write opml");
-
-        let error = run_import(&opml_path, true, &feeds_path).expect_err("missing config fails");
-
-        assert!(error.to_string().contains("无法读取"));
-        assert!(!feeds_path.exists());
-    }
-
-    #[test]
-    fn import_snippet_escapes_toml_strings() {
-        let feed = opml::OpmlFeed {
-            name: "Quote \"Feed\"".to_string(),
-            url: "https://example.com/a?x=\"y\"".to_string(),
-        };
-
-        let snippet = format_import_snippet(&[(&feed, 1)]).expect("snippet");
-        let parsed = toml::from_str::<config::Config>(&format!(
-            r#"
-[settings]
-keywords = "rust"
-
-{snippet}
-"#
-        ))
-        .expect("escaped snippet parses");
-
-        assert_eq!(parsed.feeds[0].name, feed.name);
-        assert_eq!(parsed.feeds[0].url, feed.url);
-    }
-}
+mod tests;
 
 fn maybe_sync_notion(
     cfg: &config::Config,
@@ -518,8 +418,9 @@ fn maybe_sync_notion(
     let notion_client = notion::NotionClient::new(api_key, notion_cfg.database_id.clone());
     let today = chrono::Local::now().date_naive();
     match notion_client.sync_daily_summary(all_scored, today)? {
-        true => log("Notion: 已创建当日摘要页"),
-        false => log("Notion: 已跳过（无 P0/P1 或当日页面已存在）"),
+        notion::SyncOutcome::Created => log("Notion: 已创建当日摘要页"),
+        notion::SyncOutcome::PageExists => log("Notion: 当日页面已存在，幂等跳过"),
+        notion::SyncOutcome::NoHighPriority => log("Notion: 无 P0/P1 条目，跳过"),
     }
     Ok(())
 }
@@ -580,7 +481,7 @@ fn list_feeds(feeds_path: &Path) {
         Ok(c) => c,
         Err(e) => {
             eprintln!("[ERROR] 加载 feeds 失败: {e}");
-            return;
+            std::process::exit(1);
         }
     };
     for (i, feed) in cfg.feeds.iter().enumerate() {
@@ -615,6 +516,7 @@ fn run_discover_url(url: &str) {
         }
         Err(e) => {
             eprintln!("[ERROR] {e}");
+            std::process::exit(1);
         }
     }
 }

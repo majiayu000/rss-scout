@@ -19,6 +19,13 @@ pub struct Report {
     file: File,
 }
 
+/// 单源采集失败记录——报告尾部显式列出(2026-08-23 审计主线:失败显式化)
+pub struct FetchFailure {
+    pub index: usize,
+    pub name: String,
+    pub reason: String,
+}
+
 impl Report {
     pub fn new(path: &Path, keywords: &str, dry_run: bool) -> Result<Self, Box<dyn Error>> {
         let mut file = File::create(path)?;
@@ -166,6 +173,31 @@ impl Report {
         writeln!(self.file, "_生成时间: {now}_")?;
         Ok(())
     }
+
+    /// 报告尾部显式列出采集失败的源(原则②:用户可见的降级必须标注,不允许静默吞掉)
+    pub fn write_failures(
+        &mut self,
+        total_feeds: usize,
+        failures: &[FetchFailure],
+    ) -> Result<(), Box<dyn Error>> {
+        if failures.is_empty() {
+            return Ok(());
+        }
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "## ⚠️ 采集异常 ({}/{} 源)",
+            failures.len(),
+            total_feeds
+        )?;
+        writeln!(self.file)?;
+        for f in failures {
+            let reason: String = f.reason.chars().take(160).collect();
+            writeln!(self.file, "- **{name}**: {reason}", name = f.name)?;
+        }
+        writeln!(self.file)?;
+        Ok(())
+    }
 }
 
 fn write_desc(file: &mut File, desc: &str) -> std::io::Result<()> {
@@ -201,4 +233,33 @@ pub fn extract_new_count(content: &str) -> usize {
         }
     }
     0
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+    use tempfile::NamedTempFile;
+
+    /// footer 统计行 write→extract 往返契约(2026-08-23 审计 #11:writer/reader 耦合需回归防护)
+    #[test]
+    fn footer_round_trip() {
+        let tmp = NamedTempFile::new().unwrap();
+        let mut rpt = Report::new(tmp.path(), "kw1|kw2", true).unwrap();
+        rpt.write_footer(42, 7, 1000).unwrap();
+
+        let content = fs::read_to_string(tmp.path()).unwrap();
+        assert_eq!(extract_new_count(&content), 7);
+        assert_eq!(extract_new_count("没有统计行的文本"), 0);
+    }
+
+    /// write_failures 空清单不产出任何小节
+    #[test]
+    fn write_failures_empty_is_noop() {
+        let tmp = NamedTempFile::new().unwrap();
+        let mut rpt = Report::new(tmp.path(), "kw", true).unwrap();
+        rpt.write_failures(10, &[]).unwrap();
+        let content = fs::read_to_string(tmp.path()).unwrap();
+        assert!(!content.contains("采集异常"));
+    }
 }
