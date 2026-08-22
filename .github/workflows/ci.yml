@@ -1,0 +1,41 @@
+# 最小 CI 门禁(2026-08-23 审计建议:防止 HEAD 再次烂掉)
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: never
+
+jobs:
+  test:
+    name: Test + Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      # 审计主线:HEAD 曾出现"配置解析失败仍 exit 0"。CI 用真实双配置跑 feeds 子命令,
+      # 锁死 config.rs 垫片与两份配置的兼容性,回归即红。
+      - name: Dual-config smoke
+        run: |
+          cargo run --quiet -- feeds --feeds feeds.toml > /dev/null
+          cargo run --quiet -- feeds --feeds feeds-tools.toml > /dev/null
+
+      - name: Build (locked)
+        run: cargo build --locked --release
+
+      - name: Unit tests
+        run: cargo test --locked
