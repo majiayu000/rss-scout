@@ -1378,7 +1378,7 @@ kind = "newsletter"
 # API key 从环境变量 NOTION_API_KEY 读取
 [notion]
 enabled = true
-database_id = "3310837e-a8a7-81d3-a2f1-d1024745f68a"
+database_id = "<your-notion-database-id>"
 
 # API 适配器族（2026-08-10 启用）：GitHub 新建仓库雷达 + OpenAlex 论文动量
 [[feeds]]

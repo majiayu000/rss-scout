@@ -3,6 +3,7 @@
 # 全部 URL 已用 Mozilla UA 实测可达（除 Show HN: cli 因超时被排除）
 
 [settings]
+keywords = "mcp|claude.?code|codex|coding.?agent|ai.?agent|developer.?tool|devtool|automation|observability|security|browser"
 max_items = 30
 seen_expire_days = 90
 
@@ -445,62 +446,8 @@ url = "https://github.com/ai-for-developers/awesome-ai-coding-tools/commits.atom
 tier = "core"
 kind = "awesome-list"
 
-# ============================================================
-# J. 全量 Show HN（无关键词过滤，由 GPT 粗筛兜底）
-# 替代 Internal A 论证的 5 关键词系统性遗漏
-# ============================================================
-
-[[feeds]]
-name = "ShowHN:all"
-url = "https://hnrss.org/show?count=50"
-tier = "aggregator"
-kind = "show-hn"
-
-# ============================================================
-# K. MCP Registry（官方 — JSON 接口，需 Step 1 JSON 分支处理）
-# 注：Smithery llms.txt 实测是 docs 目录而非 servers 列表（Gemini 误导），已撤；
-#    Smithery 真正 servers API 需 auth，公开匿名不可达
-# ============================================================
-
 [[feeds]]
 name = "MCP-Registry:official"
 url = "https://registry.modelcontextprotocol.io/v0/servers"
 tier = "core"
 kind = "registry-api"
-
-# ============================================================
-# L. 自建 RSSHub（loopback 127.0.0.1:5568，launchd com.lifcc.rsshub 托管）
-# 运维：~/Desktop/code/AI/tools/rsshub/（compose+wrapper+runbook）
-# 注：twitter/user 路由无 auth 时返回陈旧快照（实测最新 2025-11，会被过期
-#    过滤全杀），待小号 RSSHUB_TWITTER_AUTH_TOKEN 验证新鲜后再加 RSSHub:twitter-*
-# ============================================================
-
-[[feeds]]
-name = "RSSHub:hn-show"
-url = "http://127.0.0.1:5568/hackernews/show"
-tier = "aggregator"
-kind = "show-hn"
-
-[[feeds]]
-name = "RSSHub:juejin-ai-weekly"
-url = "http://127.0.0.1:5568/juejin/trending/ai/weekly"
-tier = "aggregator"
-kind = "community"
-
-[[feeds]]
-name = "RSSHub:juejin-freebie-weekly"
-url = "http://127.0.0.1:5568/juejin/trending/freebie/weekly"
-tier = "aggregator"
-kind = "community"
-
-[[feeds]]
-name = "RSSHub:telegram-jianjiaoPD"
-url = "http://127.0.0.1:5568/telegram/channel/jianjiaoPD"
-tier = "aggregator"
-kind = "community"
-
-[[feeds]]
-name = "RSSHub:telegram-xinyuanai"
-url = "http://127.0.0.1:5568/telegram/channel/xinyuanai"
-tier = "aggregator"
-kind = "community"

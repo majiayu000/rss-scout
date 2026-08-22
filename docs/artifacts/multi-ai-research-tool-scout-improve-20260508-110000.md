@@ -235,7 +235,7 @@ kind = "awesome-list"
 
 ## Phase 7: Artifact 元数据
 
-- **路径**：`/Users/lifcc/Desktop/code/AI/tools/rss-scout/docs/artifacts/multi-ai-research-tool-scout-improve-20260508-110000.md`
+- **路径**：`<repo-root>/docs/artifacts/multi-ai-research-tool-scout-improve-20260508-110000.md`
 - **触发**：用户 2026-05-08 调用 `multi-ai-research` skill
 - **总耗时**：~12 分钟
 - **任务数**：4 并行 + 8 fact-check API

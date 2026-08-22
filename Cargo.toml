@@ -6,7 +6,7 @@ description = "Zero-API knowledge discovery for AI dev domain"
 license = "MIT"
 
 [dependencies]
-feed-rs = "2"
+feed-rs = "=2.4.0"
 ureq = "2"
 clap = { version = "4", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }

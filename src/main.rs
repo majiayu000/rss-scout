@@ -113,7 +113,10 @@ fn main() {
         Commands::Feeds { feeds, data_dir } => {
             let data_dir = data_dir.unwrap_or_else(default_data_dir);
             let feeds_path = resolve_feeds_path(feeds.as_deref(), &data_dir);
-            list_feeds(&feeds_path);
+            if let Err(e) = list_feeds(&feeds_path) {
+                eprintln!("[ERROR] 加载 feeds 失败: {e}");
+                std::process::exit(1);
+            }
         }
         Commands::Discover {
             url,
@@ -300,9 +303,15 @@ fn run(
     }
 
     // 取出失败清单供报告小节与汇总日志使用
-    let failures = failures_mutex.into_inner().expect("failures_mutex poisoned");
+    let failures = failures_mutex
+        .into_inner()
+        .expect("failures_mutex poisoned");
     if !failures.is_empty() {
-        log(&format!("⚠ 采集失败 {}/{} 源", failures.len(), cfg.feeds.len()));
+        log(&format!(
+            "⚠ 采集失败 {}/{} 源",
+            failures.len(),
+            cfg.feeds.len()
+        ));
     }
 
     // Phase 2 (serial): dedup + score + report write
@@ -359,7 +368,7 @@ fn run(
     }
 
     // Sort by score descending
-    all_scored.sort_by(|a, b| b.score.cmp(&a.score));
+    all_scored.sort_by_key(|entry| std::cmp::Reverse(entry.score));
 
     let new_count = all_scored.len();
 
@@ -476,14 +485,8 @@ fn find_latest_report(output_dir: &Path) -> Option<PathBuf> {
     reports.last().cloned()
 }
 
-fn list_feeds(feeds_path: &Path) {
-    let cfg = match config::load(feeds_path) {
-        Ok(c) => c,
-        Err(e) => {
-            eprintln!("[ERROR] 加载 feeds 失败: {e}");
-            std::process::exit(1);
-        }
-    };
+fn list_feeds(feeds_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
+    let cfg = config::load(feeds_path)?;
     for (i, feed) in cfg.feeds.iter().enumerate() {
         let tag = if feed.skip_filter { "skip" } else { "filter" };
         let tier = feed.tier.as_deref().unwrap_or("-");
@@ -496,6 +499,7 @@ fn list_feeds(feeds_path: &Path) {
         );
     }
     println!("\n共 {} 个源", cfg.feeds.len());
+    Ok(())
 }
 
 fn run_discover_url(url: &str) {

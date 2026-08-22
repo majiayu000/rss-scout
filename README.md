@@ -6,7 +6,7 @@ rss-scout is a local, zero-API-key RSS discovery CLI that scans configured AI-de
 
 Requirements:
 
-- Rust toolchain with Cargo
+- Current stable Rust toolchain with Cargo (the project does not declare a separate MSRV)
 - Network access for `run`, `discover`, and OPML `import` feed validation
 
 Install from this source checkout:
@@ -151,7 +151,21 @@ By default, runtime data lives under `$HOME/.rss-scout`:
 - `output/scout-YYYY-MM-DD.md`: generated Markdown reports
 - `.last-read`: marker used by `check`
 
-The checked-in `feeds.toml` is the source config used in examples.
+The checked-in configs are portable examples that parse without network access:
+
+- `feeds.toml` is the general AI-development source list used by the examples.
+- `feeds-tools.toml` is a tool-discovery source list with only public URLs.
+
+Validate either config before running a network fetch:
+
+```bash
+cargo run --quiet -- feeds --feeds ./feeds.toml
+cargo run --quiet -- feeds --feeds ./feeds-tools.toml
+```
+
+Both files use only fields implemented by the current parser. Feed-level
+`adapter`, `adapter_params`, and `max_items` settings are future design ideas;
+the supported item limit is the global `[settings].max_items` value.
 
 ## Limitations And Caveats
 
@@ -160,7 +174,20 @@ The checked-in `feeds.toml` is the source config used in examples.
 - `--dry-run` prevents seen-link persistence, but it still creates the output directory and report file.
 - The current CLI does not implement `--version`; the source package version is in `Cargo.toml`.
 - Optional `[notion]` section enables a daily summary sync to a Notion database (`NOTION_API_KEY` env var required); any failure fails the run explicitly. See `docs/notion-integration.md`.
+- Feed-specific adapter fields (`adapter`, `adapter_params`, `max_items`, `host_min_interval_seconds`) are accepted for downstream pipeline compatibility but not implemented by this CLI.
 - Default feed discovery uses `$HOME/.rss-scout/feeds.toml`, so installed users should pass `--feeds` or copy the config there.
+
+## Repository Verification
+
+The repository CI audits `Cargo.lock` with pinned `cargo-audit` 0.22.2, runs
+formatting, Clippy with warnings denied, the full Rust test suite, both
+checked-in config parses, shell syntax checks, `git diff --check`, and a
+byte-level scan of every tracked file. Run the public-tree gate locally with:
+
+```bash
+./scripts/check-public-tree.sh
+bash tests/public-tree-scan.sh
+```
 
 ## Release And Package Status
 
