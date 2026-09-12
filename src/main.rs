@@ -217,12 +217,8 @@ fn run(
                 feed.name
             );
 
-            let body = match fetcher::fetch(
-                &agent,
-                &feed.url,
-                Some(&gate),
-                feed.host_min_interval_seconds,
-            ) {
+            let interval = fetcher::max_interval_for_host(&cfg.feeds, &feed.url);
+            let body = match fetcher::fetch(&agent, &feed.url, Some(&gate), interval) {
                 Ok(b) => b,
                 Err(e) => {
                     eprintln!(

@@ -56,14 +56,6 @@ impl HostIntervalGate {
         }
     }
 
-    fn record_now(&self, url: &str) {
-        let Some(host) = host_of(url) else {
-            return;
-        };
-        let mut map = self.last.lock().expect("HostIntervalGate poisoned");
-        map.insert(host, (self.now)());
-    }
-
     /// Sleep only the remaining gap since the last request to this URL's host,
     /// then record the request-start timestamp.
     pub fn wait_before(&self, url: &str, interval_secs: Option<u64>) {
@@ -132,7 +124,7 @@ fn host_of(url: &str) -> Option<String> {
 }
 
 /// Fetch `url`, optionally spacing via `gate` and using `host_min_interval_secs`
-/// as a floor for HTTP 429 retry backoff.
+/// as a floor for HTTP 429 retry backoff when no gate is provided.
 pub fn fetch(
     agent: &Agent,
     url: &str,
@@ -148,23 +140,26 @@ pub fn fetch(
     for attempt in 0..MAX_RETRIES {
         if attempt > 0 {
             let backoff = INITIAL_BACKOFF_MS * 2u64.pow(attempt - 1);
-            // Floor 429 backoff at the configured host interval so short 500ms
-            // retries do not fight a 60s Reddit-style bucket.
-            let wait_ms = if last_was_429 {
-                let host_ms = host_min_interval_secs
-                    .filter(|&s| s > 0)
-                    .map(|s| s.saturating_mul(1000))
-                    .unwrap_or(0);
-                backoff.max(host_ms)
+            if let Some(gate) = gate {
+                // Exponential backoff first, then atomically reacquire the host
+                // gate on every retry (429 and 5xx/transport). Using wait_before
+                // — not an unconditional timestamp overwrite — prevents a peer
+                // rayon worker from slipping a same-host request into the gap.
+                std::thread::sleep(Duration::from_millis(backoff));
+                gate.wait_before(url, host_min_interval_secs);
             } else {
-                backoff
-            };
-            std::thread::sleep(Duration::from_millis(wait_ms));
-            // Re-arm the host gate after a retry wait so parallel peers see the cooldown.
-            if last_was_429 {
-                if let Some(gate) = gate {
-                    gate.record_now(url);
-                }
+                // Floor 429 backoff at the configured host interval so short
+                // 500ms retries do not fight a 60s Reddit-style bucket.
+                let wait_ms = if last_was_429 {
+                    let host_ms = host_min_interval_secs
+                        .filter(|&s| s > 0)
+                        .map(|s| s.saturating_mul(1000))
+                        .unwrap_or(0);
+                    backoff.max(host_ms)
+                } else {
+                    backoff
+                };
+                std::thread::sleep(Duration::from_millis(wait_ms));
             }
         }
         match agent
