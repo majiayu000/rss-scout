@@ -95,7 +95,8 @@ pub fn discover(
     feeds_path: &Path,
     days: usize,
 ) -> Result<Vec<Candidate>, Box<dyn Error>> {
-    let known_domains = load_known_domains(feeds_path)?;
+    let cfg = config::load(feeds_path)?;
+    let known_domains = known_domains_from_feeds(&cfg.feeds);
     let report_urls = extract_urls_from_reports(data_dir, days)?;
 
     let mut domain_freq: HashMap<String, usize> = HashMap::new();
@@ -112,15 +113,16 @@ pub fn discover(
     domains.truncate(50);
 
     let agent = fetcher::new_agent();
+    let gate = std::sync::Arc::new(fetcher::HostIntervalGate::new());
 
     let candidates: Vec<Candidate> = domains
         .par_iter()
         .filter_map(|(domain, _freq)| {
-            if let Some(c) = try_autodiscovery(&agent, domain) {
+            if let Some(c) = try_autodiscovery(&agent, domain, Some(&gate), &cfg.feeds) {
                 eprintln!("  [discover] {domain} → {}", c.feed_url);
                 return Some(c);
             }
-            if let Some(c) = try_probe_paths(&agent, domain) {
+            if let Some(c) = try_probe_paths(&agent, domain, Some(&gate), &cfg.feeds) {
                 eprintln!("  [discover] {domain} → {}", c.feed_url);
                 return Some(c);
             }
@@ -133,28 +135,32 @@ pub fn discover(
 }
 
 /// Discover RSS feed for a single URL
-pub fn discover_url(url: &str) -> Result<Option<Candidate>, Box<dyn Error>> {
+pub fn discover_url(url: &str, feeds_path: &Path) -> Result<Option<Candidate>, Box<dyn Error>> {
     let domain = extract_domain(url).ok_or("invalid URL")?;
+    let feeds = match config::load(feeds_path) {
+        Ok(cfg) => cfg.feeds,
+        Err(_) => Vec::new(),
+    };
     let agent = fetcher::new_agent();
+    let gate = fetcher::HostIntervalGate::new();
 
-    if let Some(c) = try_autodiscovery(&agent, &domain) {
+    if let Some(c) = try_autodiscovery(&agent, &domain, Some(&gate), &feeds) {
         return Ok(Some(c));
     }
-    if let Some(c) = try_probe_paths(&agent, &domain) {
+    if let Some(c) = try_probe_paths(&agent, &domain, Some(&gate), &feeds) {
         return Ok(Some(c));
     }
     Ok(None)
 }
 
-fn load_known_domains(feeds_path: &Path) -> Result<HashSet<String>, Box<dyn Error>> {
-    let cfg = config::load(feeds_path)?;
+fn known_domains_from_feeds(feeds: &[config::Feed]) -> HashSet<String> {
     let mut domains = HashSet::new();
-    for feed in &cfg.feeds {
+    for feed in feeds {
         if let Some(d) = extract_domain(&feed.url) {
             domains.insert(d);
         }
     }
-    Ok(domains)
+    domains
 }
 
 fn extract_urls_from_reports(data_dir: &Path, days: usize) -> Result<Vec<String>, Box<dyn Error>> {
@@ -201,9 +207,15 @@ fn is_skip_domain(domain: &str) -> bool {
 }
 
 /// Try HTML <link rel="alternate"> autodiscovery (order-independent attribute matching)
-fn try_autodiscovery(agent: &ureq::Agent, domain: &str) -> Option<Candidate> {
+fn try_autodiscovery(
+    agent: &ureq::Agent,
+    domain: &str,
+    gate: Option<&fetcher::HostIntervalGate>,
+    feeds: &[config::Feed],
+) -> Option<Candidate> {
     let url = format!("https://{domain}");
-    let body_bytes = fetcher::fetch(agent, &url).ok()?;
+    let interval = fetcher::max_interval_for_host(feeds, &url);
+    let body_bytes = fetcher::fetch(agent, &url, gate, interval).ok()?;
     let body = String::from_utf8_lossy(&body_bytes);
 
     // Extract each <link ...> tag, then independently check for all three attributes
@@ -232,7 +244,7 @@ fn try_autodiscovery(agent: &ureq::Agent, domain: &str) -> Option<Candidate> {
         };
 
         // Validate it's actually a feed
-        if let Some(c) = validate_feed(agent, domain, &feed_url) {
+        if let Some(c) = validate_feed(agent, domain, &feed_url, gate, feeds) {
             return Some(c);
         }
     }
@@ -241,10 +253,15 @@ fn try_autodiscovery(agent: &ureq::Agent, domain: &str) -> Option<Candidate> {
 }
 
 /// Try common RSS paths
-fn try_probe_paths(agent: &ureq::Agent, domain: &str) -> Option<Candidate> {
+fn try_probe_paths(
+    agent: &ureq::Agent,
+    domain: &str,
+    gate: Option<&fetcher::HostIntervalGate>,
+    feeds: &[config::Feed],
+) -> Option<Candidate> {
     for path in PROBE_PATHS {
         let url = format!("https://{domain}{path}");
-        if let Some(c) = validate_feed(agent, domain, &url) {
+        if let Some(c) = validate_feed(agent, domain, &url, gate, feeds) {
             return Some(c);
         }
     }
@@ -252,8 +269,15 @@ fn try_probe_paths(agent: &ureq::Agent, domain: &str) -> Option<Candidate> {
 }
 
 /// Fetch URL, check if it's valid RSS/Atom, return candidate
-fn validate_feed(agent: &ureq::Agent, domain: &str, url: &str) -> Option<Candidate> {
-    let body = fetcher::fetch(agent, url).ok()?;
+fn validate_feed(
+    agent: &ureq::Agent,
+    domain: &str,
+    url: &str,
+    gate: Option<&fetcher::HostIntervalGate>,
+    feeds: &[config::Feed],
+) -> Option<Candidate> {
+    let interval = fetcher::max_interval_for_host(feeds, url);
+    let body = fetcher::fetch(agent, url, gate, interval).ok()?;
     let feed = feed_rs::parser::parse(&body[..]).ok()?;
 
     if feed.entries.is_empty() {
