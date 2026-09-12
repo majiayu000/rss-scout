@@ -17,7 +17,9 @@ pub struct Entry {
     pub image: Option<String>,
 }
 
-pub fn parse(data: &[u8], max_items: usize) -> Vec<Entry> {
+/// Parse all feed entries without an item cap.
+/// Callers should filter first, then apply a post-filter cap (global or per-feed).
+pub fn parse(data: &[u8]) -> Vec<Entry> {
     let feed = match feed_rs::parser::parse(data) {
         Ok(f) => f,
         Err(e) => {
@@ -28,7 +30,6 @@ pub fn parse(data: &[u8], max_items: usize) -> Vec<Entry> {
 
     feed.entries
         .into_iter()
-        .take(max_items)
         .filter_map(|e| {
             let title = e.title.map(|t| t.content)?.trim().to_string();
             if title.is_empty() {
@@ -165,7 +166,7 @@ mod tests {
   </channel>
 </rss>"#;
 
-        let entries = parse(xml.as_bytes(), 10);
+        let entries = parse(xml.as_bytes());
         assert_eq!(entries.len(), 2);
         assert_eq!(entries[0].title, "First Post");
         assert_eq!(entries[0].link, "https://example.com/first");
@@ -187,7 +188,7 @@ mod tests {
   </entry>
 </feed>"#;
 
-        let entries = parse(xml.as_bytes(), 10);
+        let entries = parse(xml.as_bytes());
         assert_eq!(entries.len(), 1);
         assert_eq!(entries[0].title, "Atom Entry");
         assert_eq!(entries[0].link, "https://example.com/atom-entry");
@@ -203,12 +204,12 @@ mod tests {
   </channel>
 </rss>"#;
 
-        let entries = parse(xml.as_bytes(), 10);
+        let entries = parse(xml.as_bytes());
         assert!(entries.is_empty());
     }
 
     #[test]
-    fn test_max_items_limit() {
+    fn test_parse_returns_all_items() {
         let xml = r#"<?xml version="1.0"?>
 <rss version="2.0">
   <channel>
@@ -219,13 +220,13 @@ mod tests {
   </channel>
 </rss>"#;
 
-        let entries = parse(xml.as_bytes(), 2);
-        assert_eq!(entries.len(), 2);
+        let entries = parse(xml.as_bytes());
+        assert_eq!(entries.len(), 3);
     }
 
     #[test]
     fn test_invalid_xml() {
-        let entries = parse(b"not xml at all", 10);
+        let entries = parse(b"not xml at all");
         assert!(entries.is_empty());
     }
 
@@ -246,7 +247,7 @@ mod tests {
 </rss>"#
         );
 
-        let entries = parse(xml.as_bytes(), 10);
+        let entries = parse(xml.as_bytes());
         assert_eq!(entries.len(), 1);
         assert!(entries[0].desc.len() <= 200);
     }
@@ -265,7 +266,7 @@ mod tests {
   </channel>
 </rss>"#;
 
-        let entries = parse(xml.as_bytes(), 10);
+        let entries = parse(xml.as_bytes());
         assert_eq!(entries.len(), 1);
         assert_eq!(
             entries[0].image.as_deref(),
@@ -333,7 +334,7 @@ mod tests {
   </channel>
 </rss>"#;
 
-        let entries = parse(xml.as_bytes(), 10);
+        let entries = parse(xml.as_bytes());
         assert_eq!(entries.len(), 1);
         assert_eq!(entries[0].title, "Good Post With Public Link");
         assert_eq!(entries[0].link, "https://example.com/good");
@@ -353,7 +354,7 @@ mod tests {
   </channel>
 </rss>"#;
 
-        let entries = parse(xml.as_bytes(), 10);
+        let entries = parse(xml.as_bytes());
         assert_eq!(entries.len(), 1);
         assert!(entries[0].image.is_none());
     }

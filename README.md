@@ -163,9 +163,9 @@ cargo run --quiet -- feeds --feeds ./feeds.toml
 cargo run --quiet -- feeds --feeds ./feeds-tools.toml
 ```
 
-Both files use only fields implemented by the current parser. Feed-level
-`adapter`, `adapter_params`, and `max_items` settings are future design ideas;
-the supported item limit is the global `[settings].max_items` value.
+Both files use only fields implemented by the current parser. Optional per-feed
+`max_items` is applied as a **post-filter** cap (fallback: `[settings].max_items`).
+Feed-level `adapter` and `adapter_params` remain future / downstream design ideas.
 
 ## Limitations And Caveats
 
@@ -174,7 +174,7 @@ the supported item limit is the global `[settings].max_items` value.
 - `--dry-run` prevents seen-link persistence, but it still creates the output directory and report file.
 - The current CLI does not implement `--version`; the source package version is in `Cargo.toml`.
 - Optional `[notion]` section enables a daily summary sync to a Notion database (`NOTION_API_KEY` env var required); any failure fails the run explicitly. See `docs/notion-integration.md`.
-- Feed-specific adapter fields (`adapter`, `adapter_params`, `max_items`, `host_min_interval_seconds`) are accepted for downstream pipeline compatibility but not implemented by this CLI.
+- Feed-specific adapter fields (`adapter`, `adapter_params`, `host_min_interval_seconds`) are accepted for downstream pipeline compatibility but not implemented by this CLI. Per-feed `max_items` is honored as a post-filter cap (fallback: `[settings].max_items`).
 - Default feed discovery uses `$HOME/.rss-scout/feeds.toml`, so installed users should pass `--feeds` or copy the config there.
 
 ## Repository Verification

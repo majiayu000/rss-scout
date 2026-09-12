@@ -184,6 +184,31 @@ fn collect_new_entries<'a>(
     new_entries
 }
 
+/// Filter entries first, then apply the post-filter item cap.
+/// Per-feed `max_items` overrides `default_max_items` when set (LOGIC-11).
+fn filter_and_cap_entries(
+    entries: Vec<parser::Entry>,
+    feed: &config::Feed,
+    keywords_re: &Regex,
+    default_max_items: usize,
+) -> Vec<parser::Entry> {
+    let cap = feed.max_items.unwrap_or(default_max_items);
+    entries
+        .into_iter()
+        .filter(|e| {
+            if feed.skip_filter {
+                return true;
+            }
+            if filter::is_arxiv_source(&feed.name) {
+                filter::passes_arxiv_filter(e)
+            } else {
+                filter::passes_keyword_filter(e, keywords_re)
+            }
+        })
+        .take(cap)
+        .collect()
+}
+
 fn run(
     dry_run: bool,
     feeds_path: &Path,
@@ -253,23 +278,10 @@ fn run(
                 return None;
             }
 
-            let entries = parser::parse(&body, max_items);
+            // LOGIC-11: parse all → filter → then apply per-feed/global cap
+            let entries = parser::parse(&body);
             let raw_count = entries.len();
-
-            // Keyword filter (no SeenDb access — dedup deferred to serial phase)
-            let filtered: Vec<parser::Entry> = entries
-                .into_iter()
-                .filter(|e| {
-                    if feed.skip_filter {
-                        return true;
-                    }
-                    if filter::is_arxiv_source(&feed.name) {
-                        filter::passes_arxiv_filter(e)
-                    } else {
-                        filter::passes_keyword_filter(e, &keywords_re)
-                    }
-                })
-                .collect();
+            let filtered = filter_and_cap_entries(entries, feed, &keywords_re, max_items);
 
             Some(FetchResult {
                 index,
@@ -612,7 +624,7 @@ fn run_import(
     for candidate in &new_candidates {
         match fetcher::fetch(&agent, &candidate.url) {
             Ok(body) => {
-                let entries = parser::parse(&body, 10);
+                let entries: Vec<_> = parser::parse(&body).into_iter().take(10).collect();
                 if entries.is_empty() {
                     eprintln!("  SKIP (无条目): {} — {}", candidate.name, candidate.url);
                 } else {

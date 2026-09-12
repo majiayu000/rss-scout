@@ -150,3 +150,103 @@ keywords = "rust"
     assert_eq!(parsed.feeds[0].name, feed.name);
     assert_eq!(parsed.feeds[0].url, feed.url);
 }
+
+#[test]
+fn filter_before_cap_keeps_matches_past_global_n() {
+    // LOGIC-11 regression: matching items after position N must survive.
+    // With cap=2 applied before filter, the two "claude" posts at positions 3–4
+    // would be discarded; filter-then-cap keeps them.
+    let keywords_re = Regex::new("(?i)claude|llm").unwrap();
+    let feed = config::Feed {
+        name: "Blog".to_string(),
+        url: String::new(),
+        skip_filter: false,
+        tier: None,
+        kind: None,
+        adapter: None,
+        adapter_params: None,
+        max_items: None,
+        host_min_interval_seconds: None,
+    };
+
+    let entries = vec![
+        parser::Entry {
+            title: "Unrelated A".into(),
+            link: "https://example.com/a".into(),
+            date: String::new(),
+            desc: "weather update".into(),
+            image: None,
+        },
+        parser::Entry {
+            title: "Unrelated B".into(),
+            link: "https://example.com/b".into(),
+            date: String::new(),
+            desc: "sports scores".into(),
+            image: None,
+        },
+        parser::Entry {
+            title: "Claude coding tips".into(),
+            link: "https://example.com/c".into(),
+            date: String::new(),
+            desc: "about Claude".into(),
+            image: None,
+        },
+        parser::Entry {
+            title: "LLM agents".into(),
+            link: "https://example.com/d".into(),
+            date: String::new(),
+            desc: "agentic workflows".into(),
+            image: None,
+        },
+    ];
+
+    let filtered = filter_and_cap_entries(entries, &feed, &keywords_re, 2);
+    assert_eq!(filtered.len(), 2);
+    assert_eq!(filtered[0].title, "Claude coding tips");
+    assert_eq!(filtered[1].title, "LLM agents");
+}
+
+#[test]
+fn per_feed_max_items_overrides_global_post_filter_cap() {
+    let keywords_re = Regex::new("(?i)claude|llm").unwrap();
+    let feed = config::Feed {
+        name: "Blog".to_string(),
+        url: String::new(),
+        skip_filter: false,
+        tier: None,
+        kind: None,
+        adapter: None,
+        adapter_params: None,
+        max_items: Some(1),
+        host_min_interval_seconds: None,
+    };
+
+    let entries = vec![
+        parser::Entry {
+            title: "Noise".into(),
+            link: "https://example.com/noise".into(),
+            date: String::new(),
+            desc: "unrelated".into(),
+            image: None,
+        },
+        parser::Entry {
+            title: "Claude one".into(),
+            link: "https://example.com/1".into(),
+            date: String::new(),
+            desc: "claude".into(),
+            image: None,
+        },
+        parser::Entry {
+            title: "Claude two".into(),
+            link: "https://example.com/2".into(),
+            date: String::new(),
+            desc: "claude".into(),
+            image: None,
+        },
+    ];
+
+    // Global default would allow 2; per-feed max_items=1 caps after filter.
+    let filtered = filter_and_cap_entries(entries, &feed, &keywords_re, 2);
+    assert_eq!(filtered.len(), 1);
+    assert_eq!(filtered[0].title, "Claude one");
+}

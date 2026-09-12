@@ -46,7 +46,8 @@ pub struct ScoringConfig {
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
-// 透传字段由下游管线消费,本仓二进制不读取——dead_code 是声明本身的目的
+// adapter / adapter_params / host_min_interval_seconds 由下游管线消费;
+// max_items 由本仓 CLI 在过滤后应用(LOGIC-11)。dead_code 覆盖未消费的透传字段。
 #[allow(dead_code)]
 pub struct Feed {
     pub name: String,
@@ -65,7 +66,7 @@ pub struct Feed {
     /// 适配器自由参数(query/min_points/mode/search 等)
     #[serde(default)]
     pub adapter_params: Option<toml::Value>,
-    /// 每源条目上限(覆盖 settings.max_items)
+    /// 每源条目上限(过滤后覆盖 settings.max_items)
     #[serde(default)]
     pub max_items: Option<usize>,
     /// 同 host 最小请求间隔(秒),限速用
