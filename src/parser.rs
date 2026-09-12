@@ -39,7 +39,7 @@ pub fn parse(data: &[u8], max_items: usize) -> Vec<Entry> {
             if raw_link.is_empty() {
                 return None;
             }
-            if is_suspicious_link(&raw_link) {
+            if crate::fetcher::is_blocked_destination(&raw_link) {
                 eprintln!(
                     "[parser] WARNING: skip suspicious link (localhost/private host): link={raw_link} title={title}"
                 );
@@ -55,9 +55,14 @@ pub fn parse(data: &[u8], max_items: usize) -> Vec<Entry> {
 
             let raw_desc = e.summary.map(|s| s.content).unwrap_or_default();
 
-            // Extract image: priority media thumbnail > desc <img> tag
-            let image =
-                extract_media_thumbnail(&e.media).or_else(|| extract_img_from_html(&raw_desc));
+            // Extract image: priority media thumbnail > desc <img> tag.
+            // Drop blocked private/local image hosts so they never reach reports/Notion.
+            let image = extract_media_thumbnail(&e.media)
+                .filter(|u| !crate::fetcher::is_blocked_destination(u))
+                .or_else(|| {
+                    extract_img_from_html(&raw_desc)
+                        .filter(|u| !crate::fetcher::is_blocked_destination(u))
+                });
 
             let desc: String = raw_desc.chars().take(200).collect();
 
@@ -92,28 +97,6 @@ fn extract_media_thumbnail(media: &[feed_rs::model::MediaObject]) -> Option<Stri
         }
     }
     None
-}
-
-/// Detect feed entries whose <link> points at a local/internal address.
-/// Upstream feeds (e.g. SvelteKit blogs misconfigured at build time) sometimes
-/// publish dev-server URLs like `http://localhost:5174/blog/...` into production RSS.
-/// Such links are unfetchable by downstream consumers (grok/codex/curl), so we drop
-/// the entry and warn on stderr rather than propagate a poisoned URL into reports.
-fn is_suspicious_link(link: &str) -> bool {
-    let lower = link.to_ascii_lowercase();
-    // Strip scheme to inspect host portion robustly.
-    let after_scheme = lower
-        .strip_prefix("http://")
-        .or_else(|| lower.strip_prefix("https://"))
-        .unwrap_or(lower.as_str());
-    let host_with_port = after_scheme.split('/').next().unwrap_or("");
-    // IPv6 hosts are wrapped in `[...]` per RFC 3986; split-on-':' would break them.
-    let host = if let Some(rest) = host_with_port.strip_prefix('[') {
-        rest.split(']').next().unwrap_or("")
-    } else {
-        host_with_port.split(':').next().unwrap_or("")
-    };
-    matches!(host, "localhost" | "127.0.0.1" | "0.0.0.0" | "::1") || host.ends_with(".local")
 }
 
 /// www.reddit.com 屏蔽 bot 抓取，转换为 old.reddit.com 以便 WebFetch 读取全文
@@ -298,22 +281,30 @@ mod tests {
     }
 
     #[test]
-    fn test_suspicious_link_localhost_variants() {
-        assert!(is_suspicious_link("http://localhost:5174/blog/x"));
-        assert!(is_suspicious_link("https://localhost/foo"));
-        assert!(is_suspicious_link("http://127.0.0.1:8080/path"));
-        assert!(is_suspicious_link("http://0.0.0.0/"));
-        assert!(is_suspicious_link("http://[::1]/"));
-        assert!(is_suspicious_link("http://myhost.local/feed"));
-        assert!(is_suspicious_link("HTTP://LocalHost/foo"));
+    fn test_blocked_destination_private_hosts() {
+        use crate::fetcher::is_blocked_destination;
+        assert!(is_blocked_destination("http://localhost:5174/blog/x"));
+        assert!(is_blocked_destination("https://localhost/foo"));
+        assert!(is_blocked_destination("http://127.0.0.1:8080/path"));
+        assert!(is_blocked_destination("http://0.0.0.0/"));
+        assert!(is_blocked_destination("http://[::1]/"));
+        assert!(is_blocked_destination("http://myhost.local/feed"));
+        assert!(is_blocked_destination("HTTP://LocalHost/foo"));
+        assert!(is_blocked_destination("http://192.168.1.1/"));
+        assert!(is_blocked_destination("http://10.0.0.1/"));
+        assert!(is_blocked_destination("http://169.254.169.254/"));
+        assert!(is_blocked_destination("http://[fd12:3456:789a::1]/"));
     }
 
     #[test]
-    fn test_suspicious_link_rejects_public_urls() {
-        assert!(!is_suspicious_link("https://sourcegraph.com/blog/x"));
-        assert!(!is_suspicious_link("https://arxiv.org/abs/2509.22202"));
-        assert!(!is_suspicious_link("https://localhost.example.com/"));
-        assert!(!is_suspicious_link("https://example.com/127.0.0.1/path"));
+    fn test_blocked_destination_allows_public_urls() {
+        use crate::fetcher::is_blocked_destination;
+        assert!(!is_blocked_destination("https://sourcegraph.com/blog/x"));
+        assert!(!is_blocked_destination("https://arxiv.org/abs/2509.22202"));
+        assert!(!is_blocked_destination("https://localhost.example.com/"));
+        assert!(!is_blocked_destination(
+            "https://example.com/127.0.0.1/path"
+        ));
     }
 
     #[test]
@@ -337,6 +328,59 @@ mod tests {
         assert_eq!(entries.len(), 1);
         assert_eq!(entries[0].title, "Good Post With Public Link");
         assert_eq!(entries[0].link, "https://example.com/good");
+    }
+
+    #[test]
+    fn test_parse_skips_private_entry_links() {
+        let xml = r#"<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>Poisoned Feed</title>
+    <item>
+      <title>RFC1918 Link</title>
+      <link>http://192.168.1.1/internal</link>
+    </item>
+    <item>
+      <title>Metadata Link</title>
+      <link>http://169.254.169.254/latest/meta-data/</link>
+    </item>
+    <item>
+      <title>ULA Link</title>
+      <link>http://[fd12:3456:789a::1]/path</link>
+    </item>
+    <item>
+      <title>Good Public Link</title>
+      <link>https://example.com/safe</link>
+    </item>
+  </channel>
+</rss>"#;
+
+        let entries = parse(xml.as_bytes(), 10);
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].title, "Good Public Link");
+        assert_eq!(entries[0].link, "https://example.com/safe");
+    }
+
+    #[test]
+    fn test_parse_clears_blocked_image_urls() {
+        let xml = r#"<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>Test</title>
+    <item>
+      <title>Public Link Private Image</title>
+      <link>https://example.com/post</link>
+      <description>&lt;img src="http://192.168.1.1/cover.png"&gt; Some text</description>
+    </item>
+  </channel>
+</rss>"#;
+
+        let entries = parse(xml.as_bytes(), 10);
+        assert_eq!(entries.len(), 1);
+        assert!(
+            entries[0].image.is_none(),
+            "private image URL must be cleared"
+        );
     }
 
     #[test]
