@@ -68,7 +68,7 @@ pub struct Feed {
     /// 每源条目上限(覆盖 settings.max_items)
     #[serde(default)]
     pub max_items: Option<usize>,
-    /// 同 host 最小请求间隔(秒),限速用
+    /// 同 host 最小请求间隔(秒);本 CLI 在 run/import/discover 采集时按 host 限速
     #[serde(default)]
     pub host_min_interval_seconds: Option<u64>,
 }

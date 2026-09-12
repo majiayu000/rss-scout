@@ -127,7 +127,7 @@ fn main() {
             let data_dir = data_dir.unwrap_or_else(default_data_dir);
             let feeds_path = resolve_feeds_path(feeds.as_deref(), &data_dir);
             if let Some(url) = url {
-                run_discover_url(&url);
+                run_discover_url(&url, &feeds_path);
             } else {
                 run_discover_from_reports(&data_dir, &feeds_path, days);
             }
@@ -199,6 +199,7 @@ fn run(
     let mut seen = dedup::SeenDb::load(&seen_path, cfg.settings.seen_expire_days)?;
 
     let agent = fetcher::new_agent();
+    let gate = std::sync::Arc::new(fetcher::HostIntervalGate::new());
     let max_items = cfg.settings.max_items;
 
     // Phase 1 (parallel): fetch + parse + keyword filter
@@ -216,7 +217,12 @@ fn run(
                 feed.name
             );
 
-            let body = match fetcher::fetch(&agent, &feed.url) {
+            let body = match fetcher::fetch(
+                &agent,
+                &feed.url,
+                Some(&gate),
+                feed.host_min_interval_seconds,
+            ) {
                 Ok(b) => b,
                 Err(e) => {
                     eprintln!(
@@ -502,9 +508,9 @@ fn list_feeds(feeds_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn run_discover_url(url: &str) {
+fn run_discover_url(url: &str, feeds_path: &Path) {
     eprintln!("探测 {url} ...");
-    match discover::discover_url(url) {
+    match discover::discover_url(url, feeds_path) {
         Ok(Some(c)) => {
             println!("发现 RSS feed:");
             println!("   名称: {}", c.title);
@@ -607,10 +613,12 @@ fn run_import(
 
     // Validate each candidate
     let agent = fetcher::new_agent();
+    let gate = fetcher::HostIntervalGate::new();
     let mut valid: Vec<(&opml::OpmlFeed, usize)> = Vec::new();
 
     for candidate in &new_candidates {
-        match fetcher::fetch(&agent, &candidate.url) {
+        let interval = fetcher::max_interval_for_host(&cfg.feeds, &candidate.url);
+        match fetcher::fetch(&agent, &candidate.url, Some(&gate), interval) {
             Ok(body) => {
                 let entries = parser::parse(&body, 10);
                 if entries.is_empty() {
