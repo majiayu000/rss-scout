@@ -2,6 +2,9 @@
 
 rss-scout is a local, zero-API-key RSS discovery CLI that scans configured AI-development feeds, filters and scores new entries, and writes a daily Markdown report.
 
+To build a report from your own feeds or import an existing reader's OPML,
+follow [Use a custom RSS feed list](docs/custom-feeds.md).
+
 ## Install
 
 Requirements:
